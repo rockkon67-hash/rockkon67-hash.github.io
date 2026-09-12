@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox AI Script Generator</title>
+    <style>
+        body { background-color: #0d1117; color: #e6edf3; font-family: Arial, sans-serif; padding: 20px; margin: 0; }
+        .container { max-width: 600px; margin: 0 auto; background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; }
+        .lang-select { float: right; background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 5px; border-radius: 6px; }
+        h2 { color: #f0883e; }
+        textarea { width: 100%; height: 80px; background: #0d1117; color: #fff; border: 1px solid #30363d; border-radius: 6px; padding: 10px; box-sizing: border-box; margin-top: 10px; resize: none; }
+        button { background: #238636; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        button:hover { background: #2ea043; }
+        .output { background: #0d1117; border: 1px solid #30363d; padding: 10px; border-radius: 6px; margin-top: 15px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <select class="lang-select" id="langSelect" onchange="changeLanguage()">
+        <option value="tr">🇹🇷 Türkçe</option>
+        <option value="en">🇬🇧 English</option>
+    </select>
+
+    <h2 id="title">⚡ Roblox AI Script Generator</h2>
+    <p id="desc">Ne tür bir Roblox scripti istiyorsun?</p>
+    
+    <textarea id="promptInput" placeholder="Örn: Uçma scripti, hız scripti yaz..."></textarea>
+    <button onclick="generateScript()" id="btnText">🚀 Scripti Oluştur</button>
+
+    <p id="outputTitle" style="margin-top:20px; font-weight:bold;">📜 Oluşturulan Luau Kodu:</p>
+    <div class="output" id="outputBox">-- İstediğini yazıp butona bastığında Luau kodu doğrudan burada belirecektir.</div>
+    <button onclick="copyCode()" id="copyBtn" style="background:#1f6feb; margin-top:10px;">📋 Kodu Kopyala</button>
+</div>
+
+<script>
+    const texts = {
+        tr: {
+            title: "⚡ Roblox AI Script Generator",
+            desc: "Ne tür bir Roblox scripti istiyorsun?",
+            placeholder: "Örn: Uçma scripti, hız scripti yaz...",
+            btn: "🚀 Scripti Oluştur",
+            outputTitle: "📜 Oluşturulan Luau Kodu:",
+            defaultOut: "-- İstediğini yazıp butona bastığında Luau kodu doğrudan burada belirecektir.",
+            copyBtn: "📋 Kodu Kopyala",
+            copied: "Kod kopyalandı!"
+        },
+        en: {
+            title: "⚡ Roblox AI Script Generator",
+            desc: "What kind of Roblox script do you want?",
+            placeholder: "E.g.: Write a fly script, speed script...",
+            btn: "🚀 Generate Script",
+            outputTitle: "📜 Generated Luau Code:",
+            defaultOut: "-- Type what you want and click the button to generate Luau code.",
+            copyBtn: "📋 Copy Code",
+            copied: "Code copied!"
+        }
+    };
+
+    function changeLanguage() {
+        const lang = document.getElementById("langSelect").value;
+        document.getElementById("title").innerText = texts[lang].title;
+        document.getElementById("desc").innerText = texts[lang].desc;
+        document.getElementById("promptInput").placeholder = texts[lang].placeholder;
+        document.getElementById("btnText").innerText = texts[lang].btn;
+        document.getElementById("outputTitle").innerText = texts[lang].outputTitle;
+        document.getElementById("copyBtn").innerText = texts[lang].copyBtn;
+        if(document.getElementById("outputBox").innerText.startsWith("--")) {
+            document.getElementById("outputBox").innerText = texts[lang].defaultOut;
+        }
+    }
+
+    function generateScript() {
+        const input = document.getElementById("promptInput").value;
+        const outputBox = document.getElementById("outputBox");
+        if(!input) {
+            outputBox.innerText = "-- Lütfen bir şeyler yaz kanka!";
+            return;
+        }
+        outputBox.innerText = `-- ${input}\nlocal player = game.Players.LocalPlayer;\nlocal character = player.Character or player.CharacterAdded:Wait();\n\n-- Örnek işlem\nhumanoid = character:FindFirstChildOfClass("Humanoid");\nif humanoid then\n    humanoid.WalkSpeed = 50;\nend`;
+    }
+
+    function copyCode() {
+        const code = document.getElementById("outputBox").innerText;
+        navigator.clipboard.writeText(code);
+        const lang = document.getElementById("langSelect").value;
+        alert(texts[lang].copied);
+    }
+</script>
+
+</body>
+</html>
