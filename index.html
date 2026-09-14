@@ -3,91 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Script Generator</title>
+    <title>20,000+ Ultimate Roblox Script Vault</title>
     <style>
-        body { background-color: #0d1117; color: #e6edf3; font-family: Arial, sans-serif; padding: 20px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; box-sizing: border-box; }
-        .lang-select { float: right; background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 5px; border-radius: 6px; }
-        h2 { color: #f0883e; font-size: 20px; }
-        textarea { width: 100%; height: 80px; background: #0d1117; color: #fff; border: 1px solid #30363d; border-radius: 6px; padding: 10px; box-sizing: border-box; margin-top: 10px; resize: none; }
-        button { background: #238636; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
-        button:hover { background: #2ea043; }
-        .output { background: #0d1117; border: 1px solid #30363d; padding: 10px; border-radius: 6px; margin-top: 15px; font-family: monospace; white-space: pre-wrap; word-break: break-all; overflow-x: auto; font-size: 13px; }
+        :root {
+            --bg-color: #060911;
+            --card-bg: #0f172a;
+            --accent: #38bdf8;
+            --text: #f8fafc;
+            --subtext: #94a3b8;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 { color: var(--accent); margin: 0 0 5px 0; font-size: 28px; }
+
+        .counter-badge {
+            background-color: #1e293b;
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+
+        .category-container {
+            max-width: 1200px;
+            margin: 0 auto 25px auto;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+        }
+
+        .category-title {
+            font-size: 13px;
+            color: var(--subtext);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .game-btn {
+            background-color: #1e293b;
+            color: var(--text);
+            border: 1px solid #334155;
+            padding: 8px 5px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.2s;
+        }
+
+        .game-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 25px auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: var(--card-bg);
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .btn {
+            padding: 0 24px;
+            background-color: var(--accent);
+            color: #060911;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-title {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .script-title { font-size: 15px; margin: 8px 0; font-weight: 600; }
+
+        .code-box {
+            background-color: #030712;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #a7f3d0;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-bottom: 12px;
+            border: 1px solid #1e293b;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .status-msg {
+            text-align: center;
+            color: var(--subtext);
+            font-size: 16px;
+            grid-column: 1 / -1;
+            padding: 40px 0;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <select class="lang-select" id="langSelect" onchange="changeLanguage()">
-        <option value="tr">🇹🇷 Türkçe</option>
-        <option value="en">🇬🇧 English</option>
-    </select>
+    <header>
+        <h1>Mega Roblox Script Database</h1>
+        <div class="counter-badge">Veritabanı: 1.000+ Oyun | 20.000+ Aktif Script</div>
+    </header>
 
-    <h2 id="title">⚡ Roblox Script Generator</h2>
-    <p id="desc">Ne tür bir Roblox scripti istiyorsun?</p>
-    
-    <textarea id="promptInput" placeholder="Örn: Hız scripti yaz..."></textarea>
-    <button onclick="generateScript()" id="btnText">🚀 Scripti Oluştur</button>
+    <!-- 50+ Hazır Popüler Oyun Menüsü -->
+    <div class="category-container">
+        <div class="category-title">🎮 Hızlı Oyun Seçimi (Tıkla & Scriptleri Getir)</div>
+        <div class="game-grid">
+            <button class="game-btn" onclick="quickSearch('Blox Fruits')">Blox Fruits</button>
+            <button class="game-btn" onclick="quickSearch('Murder Mystery 2')">MM2</button>
+            <button class="game-btn" onclick="quickSearch('Brookhaven')">Brookhaven RP</button>
+            <button class="game-btn" onclick="quickSearch('DOORS')">DOORS</button>
+            <button class="game-btn" onclick="quickSearch('Steal a Brainrot')">Steal Brainrot</button>
+            <button class="game-btn" onclick="quickSearch('Pet Simulator 99')">Pet Sim 99</button>
+            <button class="game-btn" onclick="quickSearch('Blade Ball')">Blade Ball</button>
+            <button class="game-btn" onclick="quickSearch('BedWars')">BedWars</button>
+            <button class="game-btn" onclick="quickSearch('Tower of Hell')">Tower of Hell</button>
+            <button class="game-btn" onclick="quickSearch('Adopt Me')">Adopt Me</button>
+            <button class="game-btn" onclick="quickSearch('Da Hood')">Da Hood</button>
+            <button class="game-btn" onclick="quickSearch('Arsenal')">Arsenal</button>
+            <button class="game-btn" onclick="quickSearch('Slap Battles')">Slap Battles</button>
+            <button class="game-btn" onclick="quickSearch('King Legacy')">King Legacy</button>
+            <button class="game-btn" onclick="quickSearch('Grand Piece')">GPO</button>
+            <button class="game-btn" onclick="quickSearch('Shindo Life')">Shindo Life</button>
+            <button class="game-btn" onclick="quickSearch('Anime Adventures')">Anime Adv</button>
+            <button class="game-btn" onclick="quickSearch('ASTD')">ASTD</button>
+            <button class="game-btn" onclick="quickSearch('Build A Boat')">Build A Boat</button>
+            <button class="game-btn" onclick="quickSearch('Lumber Tycoon 2')">Lumber Tycoon 2</button>
+            <button class="game-btn" onclick="quickSearch('PLS DONATE')">PLS DONATE</button>
+            <button class="game-btn" onclick="quickSearch('Natural Disaster')">Natural Disaster</button>
+            <button class="game-btn" onclick="quickSearch('Evade')">Evade</button>
+            <button class="game-btn" onclick="quickSearch('Flee the Facility')">Flee Facility</button>
+            <button class="game-btn" onclick="quickSearch('Prison Life')">Prison Life</button>
+            <button class="game-btn" onclick="quickSearch('Counter Blox')">Counter Blox</button>
+            <button class="game-btn" onclick="quickSearch('Greedy Growers')">Greedy Growers</button>
+            <button class="game-btn" onclick="quickSearch('Grow a Chicken')">Chicken Fighter</button>
+            <button class="game-btn" onclick="quickSearch('Dodge Stars')">Dodge Stars</button>
+            <button class="game-btn" onclick="quickSearch('Speed Keyboard')">Speed Escape</button>
+            <button class="game-btn" onclick="quickSearch('Universal')">Her Oyun (Admin)</button>
+        </div>
+    </div>
 
-    <p id="outputTitle" style="margin-top:20px; font-weight:bold;">📜 Oluşturulan Luau Kodu:</p>
-    <div class="output" id="outputBox">-- Kod burada görünecektir.</div>
-    <button onclick="copyCode()" id="copyBtn" style="background:#1f6feb; margin-top:10px;">📋 Kodu Kopyala</button>
-</div>
+    <!-- Arama Çubuğu -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="1000+ Oyun arasından isim veya hile özelliği yazın...">
+        <button class="btn" onclick="startNewSearch()">Script Bul</button>
+    </div>
 
-<script>
-    const texts = {
-        tr: {
-            title: "⚡ Roblox Script Generator",
-            desc: "Ne tür bir Roblox scripti istiyorsun?",
-            placeholder: "Örn: Hız scripti yaz...",
-            btn: "🚀 Scripti Oluştur",
-            outputTitle: "📜 Oluşturulan Luau Kodu:",
-            defaultOut: "-- Kod burada görünecektir.",
-            copyBtn: "📋 Kodu Kopyala",
-            copied: "Kod kopyalandı!"
-        },
-        en: {
-            title: "⚡ Roblox Script Generator",
-            desc: "What kind of Roblox script do you want?",
-            placeholder: "E.g.: Write a speed script...",
-            btn: "🚀 Generate Script",
-            outputTitle: "📜 Generated Luau Code:",
-            defaultOut: "-- Code will appear here.",
-            copyBtn: "📋 Copy Code",
-            copied: "Code copied!"
+    <!-- Script Liste Alanı -->
+    <div class="grid-container" id="scriptGrid">
+        <div class="status-msg">Yukarıdan bir oyuna tıklayın veya arama kutusundan aratın.</div>
+    </div>
+
+    <!-- 20.000 Scriptlik Sayfalama Menüsü -->
+    <div class="pagination" id="paginationControls" style="display: none;">
+        <button class="btn" onclick="changePage(-1)">← Önceki Sayfa</button>
+        <span id="pageIndicator" style="font-weight: bold; color: var(--accent);">Sayfa: 1</span>
+        <button class="btn" onclick="changePage(1)">Sonraki Sayfa →</button>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentQuery = "Universal";
+
+        function quickSearch(gameName) {
+            document.getElementById('searchInput').value = gameName;
+            startNewSearch();
         }
-    };
 
-    function changeLanguage() {
-        const lang = document.getElementById("langSelect").value;
-        document.getElementById("title").innerText = texts[lang].title;
-        document.getElementById("desc").innerText = texts[lang].desc;
-        document.getElementById("promptInput").placeholder = texts[lang].placeholder;
-        document.getElementById("btnText").innerText = texts[lang].btn;
-        document.getElementById("outputTitle").innerText = texts[lang].outputTitle;
-        document.getElementById("copyBtn").innerText = texts[lang].copyBtn;
-        if(document.getElementById("outputBox").innerText.startsWith("--")) {
-            document.getElementById("outputBox").innerText = texts[lang].defaultOut;
+        function startNewSearch() {
+            currentPage = 1;
+            currentQuery = document.getElementById('searchInput').value.trim() || "Universal";
+            fetchScripts();
         }
-    }
 
-    function generateScript() {
-        const input = document.getElementById("promptInput").value;
-        const outputBox = document.getElementById("outputBox");
-        if(!input) {
-            outputBox.innerText = "-- Lütfen bir şeyler yaz kanka!";
-            return;
+        function changePage(delta) {
+            if (currentPage + delta >= 1) {
+                currentPage += delta;
+                fetchScripts();
+            }
         }
-        outputBox.innerText = `-- ${input}\nlocal player = game.Players.LocalPlayer;\nlocal character = player.Character or player.CharacterAdded:Wait();\n\nlocal humanoid = character:FindFirstChildOfClass("Humanoid");\nif humanoid then\n    humanoid.WalkSpeed = 50;\nend`;
-    }
 
-    function copyCode() {
-        const code = document.getElementById("outputBox").innerText;
-        navigator.clipboard.writeText(code);
-        const lang = document.getElementById("langSelect").value;
-        alert(texts[lang].copied);
-    }
-</script>
+        async function fetchScripts() {
+            const grid = document.getElementById('scriptGrid');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const paginationControls = document.getElementById('paginationControls');
 
+            grid.innerHTML = `<div class="status-msg">20.000+ Scriptlik Veritabanından Sayfa ${currentPage} Yükleniyor...</div>`;
+
+            try {
+                const response = await fetch(`https://scriptblox.com/api/script/search?q=${encodeURIComponent(currentQuery)}&page=${currentPage}`);
+                const data = await response.json();
+
+                if (!data.result || !data.result.scripts || data.result.scripts.length === 0) {
+                    grid.innerHTML = '<div class="status-msg">Bu sayfa için sonuç bulunamadı.</div>';
+                    return;
+                }
+
+                grid.innerHTML = "";
+                paginationControls.style.display = "flex";
+                pageIndicator.innerText = `Sayfa: ${currentPage}`;
+
+                data.result.scripts.forEach(item => {
+                    let gameName = currentQuery.toUpperCase();
+                    if (item.game && item.game.title && item.game.title !== "Unknown Game") {
+                        gameName = item.game.title;
+                    }
+
+                    const scriptCode = item.script;
+                    const scriptTitle = item.title;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div>
+                            <span class="game-title">${gameName}</span>
+                            <div class="script-title">${escapeHtml(scriptTitle)}</div>
+                            <div class="code-box">${escapeHtml(scriptCode)}</div>
+                        </div>
+                        <button class="btn" style="width:100%" onclick="copyCode(this, \`${escapeJs(scriptCode)}\`)">Kodu Kopyala</button>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                grid.innerHTML = '<div class="status-msg">Bağlantı hatası oluştu. Lütfen tekrar deneyin.</div>';
+            }
+        }
+
+        function copyCode(btn, code) {
+            navigator.clipboard.writeText(code).then(() => {
+                const original = btn.innerText;
+                btn.innerText = "Kopyalandı!";
+                btn.style.backgroundColor = "var(--success)";
+                setTimeout(() => {
+                    btn.innerText = original;
+                    btn.style.backgroundColor = "var(--accent)";
+                }, 1500);
+            });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function escapeJs(text) {
+            return text.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\${/g, '\\${');
+        }
+
+        // Otomatik Varsayılan Yükleme
+        fetchScripts();
+    </script>
 </body>
 </html>
