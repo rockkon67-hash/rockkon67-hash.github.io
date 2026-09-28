@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CemTalk - Friends Chat</title>
+    <title>CemTalk - ID Based Friends Chat</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -36,7 +36,7 @@
             position: relative;
         }
 
-        /* GİRİŞ EKRANI */
+        /* GİRİŞ VE KAYIT EKRANI */
         .auth-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -339,7 +339,7 @@
             font-size: 0.95rem;
         }
 
-        /* MODAL VE PROFİL / AYARLAR PENCERESİ */
+        /* MODAL / PROFİL / İNSAN EKLEME */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -359,9 +359,7 @@
             text-align: center;
         }
 
-        .profile-card {
-            text-align: left;
-        }
+        .profile-card { text-align: left; }
 
         .profile-avatar-large {
             width: 70px;
@@ -392,6 +390,17 @@
             outline: none;
         }
 
+        .found-user-card {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
         @media (max-width: 768px) {
             .sidebar { width: 100%; }
             .main-chat-area { display: none; }
@@ -400,18 +409,18 @@
 </head>
 <body>
 
-    <!-- GİRİŞ / KAYIT EKRANI -->
+    <!-- GİRİŞ / KAYIT EKRANI (ID BÖLÜMÜ YOKTUR) -->
     <div class="auth-overlay" id="authOverlay">
         <div class="auth-card">
             <h2>CemTalk</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Secure Friends Chat</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Unique ID Chat Network</p>
             
             <div class="auth-tabs">
                 <button class="tab-btn active" id="tabLoginBtn">Sign In</button>
                 <button class="tab-btn" id="tabRegisterBtn">Sign Up</button>
             </div>
 
-            <!-- GİRİŞ -->
+            <!-- GİRİŞ FORMU -->
             <form id="loginForm">
                 <div class="form-group">
                     <label id="lbl-login-user">Username</label>
@@ -424,15 +433,11 @@
                 <button type="submit" class="btn-submit" id="btn-login">Sign In</button>
             </form>
 
-            <!-- KAYIT -->
+            <!-- KAYIT FORMU -->
             <form id="registerForm" style="display: none;">
                 <div class="form-group">
                     <label id="lbl-reg-user">Choose Username</label>
                     <input type="text" id="regUsername" class="auth-input" placeholder="New username" required>
-                </div>
-                <div class="form-group">
-                    <label>ID Number</label>
-                    <input type="text" id="regUserId" class="auth-input" placeholder="e.g. 1024" required>
                 </div>
                 <div class="form-group">
                     <label id="lbl-reg-pass">Create Password</label>
@@ -445,18 +450,34 @@
         </div>
     </div>
 
-    <!-- ARKADAŞ / İNSAN EKLEME MODALI (+ BUTONU) -->
+    <!-- ARKADAŞ EKLEME MODALI (+ BUTONUNA BASINCA AÇILIR) -->
     <div class="modal-overlay" id="addFriendModal">
         <div class="modal-card">
-            <h3 style="margin-bottom: 12px;"><i class="fas fa-user-plus"></i> Add Friend</h3>
-            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 14px;">Enter classmate's name and Id:</p>
+            <h3 style="margin-bottom: 12px;"><i class="fas fa-user-plus"></i> Add Friend by Id</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 14px;">Enter your friend's 6-digit Id number:</p>
             
-            <input type="text" id="friendUsernameInput" class="auth-input" placeholder="Friend Username..." style="margin-bottom: 10px;">
-            <input type="text" id="friendIdInput" class="auth-input" placeholder="Id (e.g. 1025)" style="margin-bottom: 14px;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="friendIdInput" class="auth-input" placeholder="Enter Id (e.g. 849201)">
+                <button onclick="searchUserById()" class="btn-submit" style="width: auto; margin-top: 0; padding: 0 16px;"><i class="fas fa-search"></i></button>
+            </div>
             
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeAddFriendModal()" class="btn-submit" style="background:#334155; flex:1;">Cancel</button>
-                <button onclick="confirmAddFriend()" class="btn-submit" style="flex:1;">Add</button>
+            <div id="searchResultArea" style="display: none;">
+                <div class="found-user-card">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="avatar" id="foundUserAvatar" style="width: 36px; height: 36px; font-size: 0.9rem;">?</div>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 600; font-size: 0.9rem;" id="foundUserName">Name</div>
+                            <div style="font-size: 0.75rem; color: #38bdf8;" id="foundUserId">Id: #000000</div>
+                        </div>
+                    </div>
+                    <button onclick="confirmAddFriend()" class="btn-submit" style="width: auto; margin:0; padding: 6px 12px; font-size:0.85rem;"><i class="fas fa-plus"></i> Add</button>
+                </div>
+            </div>
+
+            <div id="searchError" style="color: var(--accent-red); font-size: 0.85rem; margin-top: 10px; display: none;">User not found!</div>
+
+            <div style="display:flex; gap:10px; margin-top: 20px;">
+                <button onclick="closeAddFriendModal()" class="btn-submit" style="background:#334155; flex:1;">Close</button>
             </div>
         </div>
     </div>
@@ -466,7 +487,7 @@
         <div class="modal-card profile-card">
             <div class="profile-avatar-large" id="modalMyAvatar">?</div>
             <h3 style="text-align: center; margin-bottom: 4px;" id="modalMyName">User</h3>
-            <p style="text-align: center; font-size:0.85rem; color:#38bdf8; font-weight: bold; margin-bottom: 16px;" id="modalMyId">Id: #0000</p>
+            <p style="text-align: center; font-size:0.9rem; color:#38bdf8; font-weight: bold; margin-bottom: 16px;" id="modalMyId">Id: #000000</p>
             
             <hr style="border-color: var(--border-color); margin-bottom: 12px;">
 
@@ -502,7 +523,7 @@
                 </div>
                 <div>
                     <div style="font-weight: 600;" id="myProfileName">Guest</div>
-                    <div style="font-size: 0.75rem; color: #38bdf8;" id="myProfileId">Id: #----</div>
+                    <div style="font-size: 0.75rem; color: #38bdf8;" id="myProfileId">Id: #------</div>
                 </div>
             </div>
             <div class="header-actions">
@@ -514,7 +535,7 @@
         <div class="search-box">
             <div class="search-input-wrapper">
                 <i class="fas fa-search" style="color: var(--text-muted);"></i>
-                <input type="text" id="input-search" placeholder="Search friends...">
+                <input type="text" id="input-search" placeholder="Search added friends..." oninput="filterFriendsList(this.value)">
             </div>
             <button class="btn-add-friend" onclick="openAddFriendModal()" title="Add Friend (+)"><i class="fas fa-plus"></i></button>
         </div>
@@ -531,14 +552,14 @@
                 <div class="avatar" id="activeChatAvatar" style="background: #8b5cf6;">C</div>
                 <div>
                     <div style="font-weight: 600;" id="activeChatName">Select a friend</div>
-                    <div style="font-size: 0.75rem; color: #38bdf8;" id="activeChatId">Id: #----</div>
+                    <div style="font-size: 0.75rem; color: #38bdf8;" id="activeChatId">Id: #------</div>
                 </div>
             </div>
         </div>
 
         <div class="messages-container" id="messagesContainer">
             <div class="message-bubble incoming" id="txt-welcome-msg">
-                Welcome to CemTalk! Add a classmate with the (+) button using their Name and Id to start chatting!
+                Welcome to CemTalk! Share your Id with friends, or click (+) to add friends by their Id!
                 <div class="message-time">12:00</div>
             </div>
         </div>
@@ -551,8 +572,8 @@
 
     <script>
         const translations = {
-            en: { loginTab: "Sign In", regTab: "Sign Up", loginUserLbl: "Username", loginPassLbl: "Password", loginBtn: "Sign In", regUserLbl: "Choose Username", regPassLbl: "Create Password", regBtn: "Create Account", search: "Search friends...", welcome: "Welcome to CemTalk! Add a classmate with the (+) button using their Name and Id to start chatting!", typeMsg: "Type a message..." },
-            tr: { loginTab: "Giriş Yap", regTab: "Kayıt Ol", loginUserLbl: "Kullanıcı Adı", loginPassLbl: "Şifre", loginBtn: "Giriş Yap", regUserLbl: "Kullanıcı Adı Seçin", regPassLbl: "Şifre Oluşturun", regBtn: "Hesap Oluştur", search: "Arkadaş ara...", welcome: "CemTalk'a hoş geldin! (+) butonuna basarak arkadaşının adını ve Id'sini ekle!", typeMsg: "Bir mesaj yazın..." }
+            en: { loginTab: "Sign In", regTab: "Sign Up", loginUserLbl: "Username", loginPassLbl: "Password", loginBtn: "Sign In", regUserLbl: "Choose Username", regPassLbl: "Create Password", regBtn: "Create Account", search: "Search added friends...", welcome: "Welcome to CemTalk! Share your Id with friends, or click (+) to add friends by their Id!", typeMsg: "Type a message..." },
+            tr: { loginTab: "Giriş Yap", regTab: "Kayıt Ol", loginUserLbl: "Kullanıcı Adı", loginPassLbl: "Şifre", loginBtn: "Giriş Yap", regUserLbl: "Kullanıcı Adı Seçin", regPassLbl: "Şifre Oluşturun", regBtn: "Hesap Oluştur", search: "Ekli arkadaşlarda ara...", welcome: "CemTalk'a hoş geldin! Kendi Id'ni arkadaşlarınla paylaş veya (+) butonuna tıklayıp arkadaşının Id'sini yazarak ekle!", typeMsg: "Bir mesaj yazın..." }
         };
 
         function changeLanguage(lang) {
@@ -567,6 +588,7 @@
             document.getElementById('btn-register').innerText = t.regBtn;
             document.getElementById('input-search').placeholder = t.search;
             document.getElementById('messageInput').placeholder = t.typeMsg;
+            document.getElementById('txt-welcome-msg').childNodes[0].nodeValue = t.welcome + " ";
         }
 
         const authOverlay = document.getElementById('authOverlay');
@@ -587,12 +609,15 @@
 
         let currentUser = null;
         let currentUserId = null;
-        let friends = [
-            { name: "Elif", id: "101" },
-            { name: "Kaan", id: "102" }
-        ];
+        let searchedUser = null;
+        let myFriends = [];
 
-        // Sekme Değiştirme
+        // Sistem için Otomatik 6 Haneli ID Oluşturucu
+        function generateUniqueId() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Sekmeler Arası Geçiş
         tabLoginBtn.addEventListener('click', () => {
             tabLoginBtn.classList.add('active');
             tabRegisterBtn.classList.remove('active');
@@ -614,11 +639,10 @@
             } else { errorMsg.style.display = 'none'; }
         }
 
-        // KAYIT
+        // HESAP OLUŞTURMA (ID girmeye gerek yoktur, sistem otomatik tanımlar)
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('regUsername').value.trim();
-            const userId = document.getElementById('regUserId').value.trim();
             const password = document.getElementById('regPassword').value;
 
             let users = JSON.parse(localStorage.getItem('cemtalk_users') || '{}');
@@ -628,15 +652,16 @@
                 return;
             }
 
-            users[username] = { password: password, userId: userId };
+            const uniqueId = generateUniqueId();
+            users[username] = { password: password, userId: uniqueId, friends: [] };
             localStorage.setItem('cemtalk_users', JSON.stringify(users));
 
-            alert('Hesap oluşturuldu! Giriş yapabilirsiniz.');
+            alert(`Hesabınız başarıyla oluşturuldu!\nSize atanan özel ID: ${uniqueId}`);
             tabLoginBtn.click();
             document.getElementById('loginUsername').value = username;
         });
 
-        // GİRİŞ
+        // GİRİŞ YAPMA
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
@@ -650,7 +675,8 @@
             }
 
             currentUser = username;
-            currentUserId = users[username].userId || '1000';
+            currentUserId = users[username].userId;
+            myFriends = users[username].friends || [];
             
             myProfileName.textContent = currentUser;
             myProfileId.textContent = `Id: #${currentUserId}`;
@@ -667,29 +693,80 @@
             authOverlay.style.display = 'flex';
         }
 
-        // İNSAN EKLEME MODALI (+ BUTONU)
+        // (+) BUTONUNA BASILDIĞINDA ID İLE ARKADAŞ ARAMA
         function openAddFriendModal() {
             document.getElementById('addFriendModal').style.display = 'flex';
+            document.getElementById('searchResultArea').style.display = 'none';
+            document.getElementById('searchError').style.display = 'none';
+            document.getElementById('friendIdInput').value = '';
         }
 
         function closeAddFriendModal() {
             document.getElementById('addFriendModal').style.display = 'none';
-            document.getElementById('friendUsernameInput').value = '';
-            document.getElementById('friendIdInput').value = '';
         }
 
-        function confirmAddFriend() {
-            const nameInput = document.getElementById('friendUsernameInput').value.trim();
-            const idInput = document.getElementById('friendIdInput').value.trim();
+        function searchUserById() {
+            const inputId = document.getElementById('friendIdInput').value.trim();
+            const searchError = document.getElementById('searchError');
+            const searchResultArea = document.getElementById('searchResultArea');
 
-            if (nameInput && idInput) {
-                friends.push({ name: nameInput, id: idInput });
-                renderFriends();
-                closeAddFriendModal();
+            if (!inputId) return;
+
+            let users = JSON.parse(localStorage.getItem('cemtalk_users') || '{}');
+            let foundUsername = null;
+
+            for (let uname in users) {
+                if (users[uname].userId === inputId) {
+                    foundUsername = uname;
+                    break;
+                }
+            }
+
+            if (foundUsername) {
+                if (foundUsername === currentUser) {
+                    searchError.textContent = "Kendi ID'nizi ekleyemezsiniz!";
+                    searchError.style.display = 'block';
+                    searchResultArea.style.display = 'none';
+                    return;
+                }
+                
+                searchedUser = { name: foundUsername, id: inputId };
+                document.getElementById('foundUserName').innerText = foundUsername;
+                document.getElementById('foundUserId').innerText = `Id: #${inputId}`;
+                document.getElementById('foundUserAvatar').innerText = foundUsername.substring(0, 2).toUpperCase();
+                
+                searchResultArea.style.display = 'block';
+                searchError.style.display = 'none';
+            } else {
+                searchError.textContent = "Bu ID'ye sahip kullanıcı bulunamadı!";
+                searchError.style.display = 'block';
+                searchResultArea.style.display = 'none';
             }
         }
 
-        // PROFİL & AYARLAR MODALI
+        function confirmAddFriend() {
+            if (!searchedUser) return;
+
+            const exists = myFriends.some(f => f.id === searchedUser.id);
+            if (exists) {
+                alert("Bu kişi zaten ekli!");
+                return;
+            }
+
+            myFriends.push(searchedUser);
+            
+            let users = JSON.parse(localStorage.getItem('cemtalk_users') || '{}');
+            if (users[currentUser]) {
+                users[currentUser].friends = myFriends;
+                localStorage.setItem('cemtalk_users', JSON.stringify(users));
+            }
+
+            renderFriends();
+            closeAddFriendModal();
+            alert(`${searchedUser.name} başarıyla eklendi!`);
+        }
+
+        // PROFİL / AYARLAR
         function openProfileSettingsModal() {
             if(!currentUser) return;
             document.getElementById('modalMyName').innerText = currentUser;
@@ -702,9 +779,11 @@
             document.getElementById('profileSettingsModal').style.display = 'none';
         }
 
-        function renderFriends() {
+        function renderFriends(filter = "") {
             friendsChatList.innerHTML = '';
-            friends.forEach(friend => {
+            const filtered = myFriends.filter(f => f.name.toLowerCase().includes(filter.toLowerCase()) || f.id.includes(filter));
+            
+            filtered.forEach(friend => {
                 const item = document.createElement('div');
                 item.className = 'chat-item';
                 item.onclick = () => selectFriend(friend.name, friend.id);
@@ -723,6 +802,10 @@
                 `;
                 friendsChatList.appendChild(item);
             });
+        }
+
+        function filterFriendsList(val) {
+            renderFriends(val);
         }
 
         function selectFriend(name, id) {
@@ -750,8 +833,6 @@
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
-
-        renderFriends();
     </script>
 </body>
 </html>
