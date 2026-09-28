@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CemTalk - Ultra App</title>
+    <title>CemTalk - Mega Ultimate App</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -18,12 +18,13 @@
             --accent-green: #10b981;
             --accent-red: #ef4444;
             --accent-purple: #8b5cf6;
+            --accent-purple-glow: rgba(139, 92, 246, 0.4);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.08);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
 
         /* LOADING SPLASH */
@@ -32,83 +33,154 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        .spinner { width: 50px; height: 50px; border: 3px solid transparent; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .spinner-outer {
+            width: 60px; height: 60px; border-radius: 50%; border: 3px solid transparent;
+            border-top-color: var(--primary); border-right-color: var(--accent-purple);
+            animation: spin 1s linear infinite; display: flex; align-items: center; justify-content: center;
+        }
+        .spinner-inner { width: 35px; height: 35px; border-radius: 50%; border: 3px solid transparent; border-bottom-color: var(--accent-green); animation: spin-reverse 0.8s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 
         /* AUTH OVERLAY */
         .auth-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: radial-gradient(circle at center, rgba(17, 24, 39, 0.95), rgba(9, 13, 22, 0.98));
-            z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;
+            backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;
         }
-        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 32px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; }
-        .auth-input { width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; color: white; outline: none; margin-top: 6px; }
-        .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 12px; }
+        .auth-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); padding: 32px; border-radius: 24px;
+            width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+        .auth-card h2 {
+            font-size: 2rem; font-weight: 900; background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px;
+        }
+        .auth-tabs { display: flex; margin: 20px 0; background: rgba(15, 23, 42, 0.6); padding: 4px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 8px 4px; background: none; border: none; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 0 12px var(--primary-glow); }
+        .tab-btn.admin-tab.active { background: var(--accent-purple); box-shadow: 0 0 12px var(--accent-purple-glow); }
+        
+        .form-group { margin-bottom: 12px; text-align: left; }
+        .form-group label { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+        .auth-input { width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px; color: white; outline: none; font-size: 0.9rem; }
+        .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .error-msg { color: var(--accent-red); font-size: 0.85rem; margin-top: 10px; display: none; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 8px; }
 
-        /* LEFT SIDEBAR NAVIGATION */
-        .app-nav {
-            width: 65px; background: #070a12; border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; align-items: center; padding-top: 16px; gap: 20px;
-        }
-        .nav-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+        /* LEFT NAVIGATION BAR */
+        .app-nav { width: 68px; background: #070a12; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; padding-top: 16px; gap: 16px; }
+        .nav-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
         .nav-icon.active, .nav-icon:hover { background: var(--primary); color: white; box-shadow: 0 0 12px var(--primary-glow); }
 
         /* SIDEBAR LIST */
         .sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .user-header { padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); }
-        .avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .user-header { padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.4); }
+        .avatar { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #1d4ed8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; }
         
         .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { display: flex; align-items: center; padding: 12px 16px; gap: 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .chat-item { display: flex; align-items: center; padding: 12px 16px; gap: 12px; cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.02); transition: 0.2s; }
         .chat-item:hover, .chat-item.active { background: rgba(255, 255, 255, 0.05); }
 
-        /* MAIN CONTENT AREA */
+        /* MAIN CHAT AREA */
         .main-chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-chat); position: relative; }
-        .chat-header { height: 65px; padding: 0 20px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .chat-header { height: 68px; padding: 0 20px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         
         .messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .message-bubble { max-width: 65%; padding: 12px 16px; border-radius: 16px; font-size: 0.9rem; word-break: break-word; }
-        .message-bubble.incoming { align-self: flex-start; background: var(--bg-bubble-other); }
-        .message-bubble.outgoing { align-self: flex-end; background: var(--bg-bubble-user); }
-        .message-img { max-width: 250px; border-radius: 10px; margin-top: 5px; display: block; }
+        .message-bubble { max-width: 65%; padding: 12px 16px; border-radius: 16px; font-size: 0.92rem; line-height: 1.4; word-break: break-word; }
+        .message-bubble.incoming { align-self: flex-start; background: var(--bg-bubble-other); border-bottom-left-radius: 4px; }
+        .message-bubble.outgoing { align-self: flex-end; background: var(--bg-bubble-user); border-bottom-right-radius: 4px; }
+        .message-img { max-width: 260px; border-radius: 12px; margin-top: 6px; display: block; border: 1px solid rgba(255,255,255,0.1); }
+        .message-time { font-size: 0.68rem; opacity: 0.7; margin-top: 4px; text-align: right; }
 
-        .chat-input-area { padding: 14px; background: var(--bg-panel); border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
-        .chat-input { flex: 1; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: white; outline: none; }
+        .chat-input-area { padding: 16px; background: var(--bg-panel); border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
+        .chat-input { flex: 1; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 16px; color: white; outline: none; font-size: 0.95rem; }
 
-        .btn-action { width: 40px; height: 40px; border-radius: 10px; border: none; background: rgba(255,255,255,0.05); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-action:hover { background: rgba(255,255,255,0.15); }
+        .btn-icon { width: 40px; height: 40px; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; transition: 0.2s; }
+        .btn-icon:hover { background: rgba(255, 255, 255, 0.12); }
 
-        /* GAME AREA STYLES */
+        /* GAME AREA */
         .game-container { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 15px; }
-        #snakeCanvas { background: #000; border: 2px solid var(--primary); border-radius: 8px; }
-        .tic-grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 5px; }
-        .tic-btn { width: 80px; height: 80px; background: var(--bg-panel); border: 1px solid var(--border-color); color: white; font-size: 1.8rem; font-weight: bold; cursor: pointer; border-radius: 8px; }
+        #snakeCanvas { background: #000; border: 2px solid var(--primary); border-radius: 12px; box-shadow: 0 0 20px var(--primary-glow); }
+        .tic-grid { display: grid; grid-template-columns: repeat(3, 85px); gap: 8px; }
+        .tic-btn { width: 85px; height: 85px; background: var(--bg-panel); border: 1px solid var(--border-color); color: white; font-size: 2rem; font-weight: bold; cursor: pointer; border-radius: 12px; transition: 0.2s; }
+        .tic-btn:hover { background: rgba(255,255,255,0.08); }
 
         /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 3000; display: none; align-items: center; justify-content: center; }
-        .modal-card { background: var(--bg-panel); padding: 24px; border-radius: 18px; width: 360px; text-align: center; border: 1px solid var(--border-color); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 3000; display: none; align-items: center; justify-content: center; }
+        .modal-card { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 28px; border-radius: 20px; width: 420px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .admin-user-item { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.8); padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); text-align: left; }
+        .btn-admin-action { border: none; color: white; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; margin-left: 4px; }
     </style>
 </head>
 <body>
 
+    <!-- YÜKLENİYOR (SPLASH LOADING) -->
     <div id="appLoader">
-        <div class="spinner"></div>
-        <h3 style="margin-top: 15px; color: var(--primary);">CemTalk</h3>
+        <div class="spinner-outer"><div class="spinner-inner"></div></div>
+        <h3 style="margin-top: 15px; color: var(--primary); font-weight: 800; letter-spacing: 2px;">CEMTALK</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Güvenli Bağlantı Kuruluyor...</p>
     </div>
 
-    <!-- AUTH OVERLAY -->
+    <!-- GİRİŞ / KAYIT / ADMIN OVERLAY -->
     <div class="auth-overlay" id="authOverlay">
         <div class="auth-card">
-            <h2 style="margin-bottom: 10px; color: var(--primary);">CemTalk</h2>
+            <h2>CemTalk</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Özel Arkadaş & Grup Mesajlaşma Platformu</p>
+
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tabLoginBtn">Giriş Yap</button>
+                <button class="tab-btn" id="tabRegisterBtn">Kayıt Ol</button>
+                <button class="tab-btn admin-tab" id="tabAdminBtn"><i class="fas fa-shield-alt"></i> Admin</button>
+            </div>
+
+            <!-- GİRİŞ FORMU -->
             <form id="loginForm">
-                <input type="text" id="loginUsername" class="auth-input" placeholder="Kullanıcı Adı" required>
-                <input type="password" id="loginPassword" class="auth-input" placeholder="Şifre" required>
-                <button type="submit" class="btn-submit">Giriş Yap / Kaydol</button>
+                <div class="form-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="loginUsername" class="auth-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" id="loginPassword" class="auth-input" required>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fas fa-sign-in-alt"></i> Giriş Yap</button>
             </form>
+
+            <!-- KAYIT FORMU -->
+            <form id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="regUsername" class="auth-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" id="regPassword" class="auth-input" required>
+                </div>
+                <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--accent-green), #059669);"><i class="fas fa-user-plus"></i> Hesap Oluştur</button>
+            </form>
+
+            <!-- ADMIN GİRİŞ FORMU -->
+            <form id="adminForm" style="display: none;">
+                <div class="form-group">
+                    <label>Kullanıcı Adınız</label>
+                    <input type="text" id="adminUsername" class="auth-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Kendi Şifreniz</label>
+                    <input type="password" id="adminUserPassword" class="auth-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Özel Admin Kodu (cem veya çınar)</label>
+                    <input type="password" id="adminCode" class="auth-input" placeholder="cem veya çınar" required>
+                </div>
+                <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--accent-purple), #7c3aed);"><i class="fas fa-lock"></i> Admin Paneline Giriş Yap</button>
+            </form>
+
+            <div class="error-msg" id="errorMsg"></div>
         </div>
     </div>
 
-    <!-- LEFT NAVBAR -->
+    <!-- LEFT NAVBAR NAVIGASYON -->
     <div class="app-nav">
         <div class="nav-icon active" id="tabChats" onclick="switchMainTab('chats')" title="Sohbetler"><i class="fas fa-comment-dots"></i></div>
         <div class="nav-icon" id="tabGroups" onclick="switchMainTab('groups')" title="Gruplar"><i class="fas fa-users"></i></div>
@@ -121,81 +193,97 @@
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="avatar" id="myAvatar">?</div>
                 <div>
-                    <div id="myProfileName" style="font-weight: bold; font-size: 0.9rem;">Giriş Yapılmadı</div>
+                    <div id="myProfileName" style="font-weight: 700; font-size:0.9rem;">Giriş Yapılmadı</div>
                     <div id="myProfileId" style="font-size: 0.75rem; color: #38bdf8;">ID: #------</div>
                 </div>
             </div>
-            <button class="btn-action" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            <div style="display: flex; gap: 6px;">
+                <button class="btn-icon" id="adminBtn" title="Admin Paneli" style="display: none; background: var(--accent-purple);" onclick="openAdminModal()"><i class="fas fa-shield-alt"></i></button>
+                <button class="btn-icon" title="Çıkış Yap" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
         </div>
 
-        <div style="padding: 10px; display: flex; gap: 5px;">
-            <input type="text" id="friendSearch" class="auth-input" style="margin: 0; font-size: 0.8rem;" placeholder="ID veya Isim Ara...">
-            <button class="btn-action" style="background: var(--primary);" onclick="openAddFriendModal()"><i class="fas fa-plus"></i></button>
+        <div style="padding: 12px; display: flex; gap: 8px;">
+            <input type="text" id="friendSearch" class="auth-input" style="font-size: 0.8rem;" placeholder="ID veya İsim Ara..." oninput="renderSidebarList(this.value)">
+            <button class="btn-icon" style="background: var(--primary);" onclick="openAddFriendModal()" title="ID ile Ekle"><i class="fas fa-plus"></i></button>
         </div>
 
-        <!-- SOHBET LISTESI -->
         <div class="chat-list" id="chatListContainer"></div>
     </div>
 
-    <!-- MAIN CHAT AREA -->
+    <!-- CHAT MAIN AREA -->
     <div class="main-chat-area" id="chatArea">
         <div class="chat-header">
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="avatar" id="activeAvatar">C</div>
                 <div>
-                    <div id="activeChatName" style="font-weight: bold;">Bir sohbet seçin</div>
+                    <div id="activeChatName" style="font-weight: 700;">Bir sohbet seçin</div>
                     <div id="activeChatSub" style="font-size: 0.75rem; color: var(--accent-green);">Çevrimiçi</div>
                 </div>
             </div>
-            <!-- SESLI VE GORUNTULU ARAMA BUTONLARI -->
+            <!-- SESLİ & GÖRÜNTÜLÜ ARAMA BUTONLARI -->
             <div style="display: flex; gap: 8px;">
-                <button class="btn-action" onclick="startCall('voice')" title="Sesli Ara"><i class="fas fa-phone"></i></button>
-                <button class="btn-action" onclick="startCall('video')" title="Görüntülü Ara"><i class="fas fa-video"></i></button>
+                <button class="btn-icon" onclick="startCall('voice')" title="Sesli Ara"><i class="fas fa-phone"></i></button>
+                <button class="btn-icon" onclick="startCall('video')" title="Görüntülü Ara"><i class="fas fa-video"></i></button>
             </div>
         </div>
 
         <div class="messages-container" id="messagesContainer">
-            <div class="message-bubble incoming">CemTalk'a Hoş geldin! Yandan arkadaşını veya grupları seçip mesajlaşabilirsin.</div>
+            <div class="message-bubble incoming">CemTalk'a hoş geldin! Sol taraftan arkadaşını veya grupları seçerek anında mesajlaşabilirsin.</div>
         </div>
 
         <div class="chat-input-area">
             <!-- FOTOĞRAF YÜKLEME -->
-            <label class="btn-action" title="Fotoğraf Gönder">
+            <label class="btn-icon" title="Fotoğraf Gönder" style="cursor: pointer;">
                 <i class="fas fa-image"></i>
                 <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="sendImage(this)">
             </label>
-            
+
             <!-- SES KAYIT -->
-            <button class="btn-action" id="recordBtn" onclick="toggleAudioRecord()" title="Sesli Mesaj Kaydet"><i class="fas fa-microphone"></i></button>
+            <button class="btn-icon" id="recordBtn" onclick="toggleAudioRecord()" title="Sesli Mesaj Kaydet"><i class="fas fa-microphone"></i></button>
 
             <input type="text" class="chat-input" id="messageInput" placeholder="Mesajınızı yazın...">
-            <button class="btn-action" style="background: var(--primary);" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            <button class="btn-icon" style="background: var(--primary); box-shadow: 0 0 10px var(--primary-glow);" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- GAME AREA -->
+    <!-- GAME MAIN AREA -->
     <div class="main-chat-area" id="gameArea" style="display: none;">
         <div class="chat-header">
-            <div style="font-weight: bold;"><i class="fas fa-gamepad"></i> CemTalk Oyun Salonu</div>
+            <div style="font-weight: 700; display:flex; align-items:center; gap:8px;"><i class="fas fa-gamepad"></i> CemTalk Mini Oyun Alanı</div>
         </div>
         <div class="game-container" id="gameSnakeArea">
-            <h3>Yılan Oyunu (Snake)</h3>
+            <h3 style="color: var(--primary);">Yılan Oyunu (Snake)</h3>
             <canvas id="snakeCanvas" width="300" height="300"></canvas>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Yön tuşları ile kontrol edebilirsiniz.</p>
-            <button class="btn-submit" style="width: auto; padding: 6px 16px;" onclick="startSnakeGame()">Oyunu Başlat</button>
+            <p style="font-size:0.8rem; color:var(--text-muted);">Yön tuşları (Yukarı, Aşağı, Sol, Sağ) ile oynayabilirsiniz.</p>
+            <button class="btn-submit" style="width: auto; padding: 8px 20px;" onclick="startSnakeGame()">Oyunu Başlat</button>
         </div>
         <div class="game-container" id="gameTicArea" style="display: none;">
-            <h3>XOX Oyunu (Tic-Tac-Toe)</h3>
+            <h3 style="color: var(--accent-purple);">XOX Oyunu (Tic-Tac-Toe)</h3>
             <div class="tic-grid" id="ticGrid"></div>
-            <button class="btn-submit" style="width: auto; padding: 6px 16px; margin-top: 10px;" onclick="resetTicGame()">Sıfırla</button>
+            <button class="btn-submit" style="width: auto; padding: 8px 20px; margin-top: 10px;" onclick="resetTicGame()">Oyunu Sıfırla</button>
         </div>
     </div>
 
-    <!-- ARKADAS EKLEME MODAL -->
+    <!-- ADMIN MODALI -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-card" style="width: 480px;">
+            <h3 style="margin-bottom: 6px; color: var(--accent-purple); display:flex; align-items:center; justify-center; gap:8px;">
+                <i class="fas fa-user-shield"></i> Admin Yönetim Paneli
+            </h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Sistemde Kayıtlı Tüm Kullanıcılar ve Şifreleri:</p>
+            
+            <div id="adminUserList" style="max-height: 300px; overflow-y: auto; margin-bottom: 16px;"></div>
+            <button onclick="closeModal('adminModal')" class="btn-submit" style="background:#334155;">Kapat</button>
+        </div>
+    </div>
+
+    <!-- ARKADAŞ EKLEME MODALI -->
     <div class="modal-overlay" id="addFriendModal">
         <div class="modal-card">
-            <h3>ID ile Arkadaş Ekle</h3>
-            <input type="text" id="friendIdInput" class="auth-input" placeholder="6 Haneli ID (#123456)" style="margin: 15px 0;">
+            <h3><i class="fas fa-user-plus"></i> ID ile Arkadaş Ekle</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Arkadaşınızın 6 haneli ID numarasını girin:</p>
+            <input type="text" id="friendIdInput" class="auth-input" placeholder="Örn: 123456 veya #123456" style="margin: 15px 0;">
             <div style="display: flex; gap: 10px;">
                 <button class="btn-submit" onclick="confirmAddFriend()">Ekle</button>
                 <button class="btn-submit" style="background: #334155;" onclick="closeModal('addFriendModal')">İptal</button>
@@ -203,13 +291,13 @@
         </div>
     </div>
 
-    <!-- ARAMA MODAL (CALL) -->
+    <!-- ARAMA MODALI (VOICE & VIDEO CALL) -->
     <div class="modal-overlay" id="callModal">
         <div class="modal-card">
             <div class="avatar" id="callAvatar" style="width:70px; height:70px; margin: 0 auto 15px auto; font-size: 1.5rem;">C</div>
             <h3 id="callTitle">Aranıyor...</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;" id="callStatus">Bağlantı kuruluyor...</p>
-            <button class="btn-submit" style="background: var(--accent-red); margin-top: 20px;" onclick="closeModal('callModal')">Aramayı Kapat</button>
+            <p style="font-size: 0.8rem; color: var(--accent-green); margin-top: 5px;" id="callStatus">Bağlantı Kuruluyor...</p>
+            <button class="btn-submit" style="background: var(--accent-red); margin-top: 20px;" onclick="closeModal('callModal')"><i class="fas fa-phone-slash"></i> Aramayı Kapat</button>
         </div>
     </div>
 
@@ -221,8 +309,17 @@
             }, 600);
         });
 
+        const tabLoginBtn = document.getElementById('tabLoginBtn');
+        const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+        const tabAdminBtn = document.getElementById('tabAdminBtn');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const adminForm = document.getElementById('adminForm');
+        const errorMsg = document.getElementById('errorMsg');
+
         let currentUser = null;
-        let activeTab = 'chats'; 
+        let isAdmin = false;
+        let activeTab = 'chats';
         let activeChat = null;
         let isRecording = false;
         let mediaRecorder, audioChunks = [];
@@ -230,47 +327,172 @@
         function getUsersDB() { return JSON.parse(localStorage.getItem('cemtalk_users') || '{}'); }
         function saveUsersDB(db) { localStorage.setItem('cemtalk_users', JSON.stringify(db)); }
 
-        // AUTO REFRESH REFRESH ENGINE (EVERY 10 SECONDS)
+        /* AUTO REFRESH ENGINE (HER 10 SANİYEDE BİR VE SEKMELER ARASI GÜNCELLEME) */
         setInterval(() => { refreshEngine(); }, 10000);
         window.addEventListener('storage', () => { refreshEngine(); });
 
         function refreshEngine() {
             if (!currentUser) return;
             renderSidebarList();
+            if (isAdmin && document.getElementById('adminModal').style.display === 'flex') {
+                renderAdminUserList();
+            }
         }
 
-        /* AUTHENTICATION */
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+        /* TAB DEĞİŞTİRME (GİRİŞ/KAYIT/ADMIN) */
+        tabLoginBtn.addEventListener('click', () => showTab(tabLoginBtn, loginForm));
+        tabRegisterBtn.addEventListener('click', () => showTab(tabRegisterBtn, registerForm));
+        tabAdminBtn.addEventListener('click', () => showTab(tabAdminBtn, adminForm));
+
+        function showTab(btn, form) {
+            [tabLoginBtn, tabRegisterBtn, tabAdminBtn].forEach(b => b.classList.remove('active'));
+            [loginForm, registerForm, adminForm].forEach(f => f.style.display = 'none');
+            btn.classList.add('active');
+            form.style.display = 'block';
+            showError('');
+        }
+
+        function showError(msg) {
+            if (msg) { errorMsg.textContent = msg; errorMsg.style.display = 'block'; }
+            else { errorMsg.style.display = 'none'; }
+        }
+
+        /* KAYIT OLMA */
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('regUsername').value.trim();
+            const p = document.getElementById('regPassword').value;
+            let users = getUsersDB();
+
+            if (users[u]) { showError('Bu kullanıcı adı zaten alımış!'); return; }
+
+            const newId = Math.floor(100000 + Math.random() * 900000).toString();
+            users[u] = { password: p, userId: newId, isAdmin: false, isBanned: false, friends: [], groups: ['Yazılımcılar', 'Oyun Kovanı'] };
+            saveUsersDB(users);
+
+            alert(`Hesap Oluşturuldu!\nID Numaranız: ${newId}`);
+            tabLoginBtn.click();
+            document.getElementById('loginUsername').value = u;
+        });
+
+        /* GİRİŞ YAPMA */
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const u = document.getElementById('loginUsername').value.trim();
             const p = document.getElementById('loginPassword').value;
             let users = getUsersDB();
 
-            if(!users[u]) {
-                users[u] = { password: p, id: Math.floor(100000 + Math.random() * 900000).toString(), friends: [], groups: ['Yazılımcılar', 'Oyun Kovanı'] };
-                saveUsersDB(users);
-            } else if(users[u].password !== p) {
-                alert("Şifre Hatalı!"); return;
+            if (!users[u] || users[u].password !== p) { showError('Kullanıcı adı veya şifre yanlış!'); return; }
+            if (users[u].isBanned) { showError('Hesabınız engellenmiştir!'); return; }
+
+            loginSuccess(u, users[u]);
+        });
+
+        /* ADMIN GİRİŞİ (cem VEYA çınar) */
+        adminForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('adminUsername').value.trim();
+            const p = document.getElementById('adminUserPassword').value;
+            const code = document.getElementById('adminCode').value.trim().toLowerCase();
+
+            if (code !== 'cem' && code !== 'çınar') {
+                showError('Özel kod hatalı! Geçerli bir kod giriniz.');
+                return;
             }
 
-            currentUser = u;
-            document.getElementById('myProfileName').innerText = u;
-            document.getElementById('myProfileId').innerText = `ID: #${users[u].id}`;
-            document.getElementById('myAvatar').innerText = u.substring(0, 2).toUpperCase();
-            document.getElementById('authOverlay').style.display = 'none';
+            let users = getUsersDB();
 
-            renderSidebarList();
+            if (users[u]) {
+                if (users[u].password !== p) { showError('Şifreniz yanlış!'); return; }
+                users[u].isAdmin = true;
+            } else {
+                users[u] = { password: p, userId: Math.floor(100000 + Math.random() * 900000).toString(), isAdmin: true, isBanned: false, friends: [], groups: ['Yazılımcılar', 'Oyun Kovanı'] };
+            }
+
+            saveUsersDB(users);
+            loginSuccess(u, users[u]);
         });
+
+        function loginSuccess(username, userData) {
+            currentUser = username;
+            isAdmin = userData.isAdmin || false;
+
+            document.getElementById('myProfileName').innerText = currentUser;
+            document.getElementById('myProfileId').innerText = `ID: #${userData.userId}`;
+            document.getElementById('myAvatar').innerText = currentUser.substring(0, 2).toUpperCase();
+
+            document.getElementById('adminBtn').style.display = isAdmin ? 'flex' : 'none';
+            document.getElementById('authOverlay').style.display = 'none';
+            showError('');
+            renderSidebarList();
+        }
 
         function logout() { location.reload(); }
 
-        /* NAVIGATION TABS */
+        /* ADMIN MODAL & İŞLEMLERİ */
+        function openAdminModal() {
+            if (!isAdmin) return;
+            renderAdminUserList();
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function renderAdminUserList() {
+            const list = document.getElementById('adminUserList');
+            list.innerHTML = '';
+            let users = getUsersDB();
+
+            for (let uname in users) {
+                const u = users[uname];
+                const div = document.createElement('div');
+                div.className = 'admin-user-item';
+                div.innerHTML = `
+                    <div>
+                        <strong style="color:#fff;">${uname}</strong> 
+                        <span style="font-size:0.75rem; color:#38bdf8;">(#${u.userId})</span>
+                        ${u.isAdmin ? '<span style="font-size:0.65rem; background:var(--accent-purple); padding:2px 6px; border-radius:4px; margin-left:4px;">YETKİLİ</span>' : ''}
+                        ${u.isBanned ? '<span style="font-size:0.65rem; background:var(--accent-red); padding:2px 6px; border-radius:4px; margin-left:4px;">BANLI</span>' : ''}
+                        <div style="font-size:0.8rem; color:#f59e0b; margin-top:3px;">
+                            <i class="fas fa-key"></i> Şifre: <strong>${u.password}</strong>
+                        </div>
+                    </div>
+                    ${uname !== currentUser ? `
+                    <div>
+                        ${u.isBanned ? 
+                            `<button onclick="toggleBanUser('${uname}', false)" class="btn-admin-action" style="background:var(--accent-green);">Ban Kaldır</button>` : 
+                            `<button onclick="toggleBanUser('${uname}', true)" class="btn-admin-action" style="background:#f97316;">Banla</button>`
+                        }
+                        <button onclick="deleteUserByAdmin('${uname}')" class="btn-admin-action" style="background:var(--accent-red);">Sil</button>
+                    </div>` : ''}
+                `;
+                list.appendChild(div);
+            }
+        }
+
+        function toggleBanUser(uname, banStatus) {
+            let users = getUsersDB();
+            if (users[uname]) {
+                users[uname].isBanned = banStatus;
+                saveUsersDB(users);
+                renderAdminUserList();
+            }
+        }
+
+        function deleteUserByAdmin(uname) {
+            if (confirm(`${uname} kullanıcısını silmek istediğinize emin misiniz?`)) {
+                let users = getUsersDB();
+                delete users[uname];
+                saveUsersDB(users);
+                renderAdminUserList();
+            }
+        }
+
+        /* UYGULAMA İÇİ NAVİGASYON (SOHBET, GRUP, OYUN) */
         function switchMainTab(tab) {
             activeTab = tab;
             document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
             document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
 
-            if(tab === 'games') {
+            if (tab === 'games') {
                 document.getElementById('chatArea').style.display = 'none';
                 document.getElementById('gameArea').style.display = 'flex';
                 renderGameList();
@@ -281,22 +503,26 @@
             }
         }
 
-        function renderSidebarList() {
+        function renderSidebarList(filter = '') {
             const list = document.getElementById('chatListContainer');
             list.innerHTML = '';
             let users = getUsersDB();
             let me = users[currentUser];
+            if (!me) return;
 
-            if(activeTab === 'chats') {
-                if(!me.friends || me.friends.length === 0) {
-                    list.innerHTML = '<div style="padding:15px; color:var(--text-muted); font-size:0.8rem;">Henüz arkadaşınız yok. (+) ile ekleyin.</div>';
+            if (activeTab === 'chats') {
+                const friends = me.friends || [];
+                const filtered = friends.filter(f => f.name.toLowerCase().includes(filter.toLowerCase()) || f.id.includes(filter));
+                if (filtered.length === 0) {
+                    list.innerHTML = '<div style="padding:15px; color:var(--text-muted); font-size:0.8rem; text-align:center;">Arkadaşınız yok veya bulunamadı. (+) butonuna basarak ekleyin.</div>';
                     return;
                 }
-                me.friends.forEach(f => {
+                filtered.forEach(f => {
                     list.appendChild(createChatItem(f.name, `#${f.id}`, f.name.substring(0,2).toUpperCase()));
                 });
-            } else if(activeTab === 'groups') {
-                me.groups.forEach(g => {
+            } else if (activeTab === 'groups') {
+                const groups = me.groups || ['Yazılımcılar', 'Oyun Kovanı'];
+                groups.forEach(g => {
                     list.appendChild(createChatItem(g, 'Grup Sohbeti', 'G'));
                 });
             }
@@ -305,8 +531,8 @@
         function renderGameList() {
             const list = document.getElementById('chatListContainer');
             list.innerHTML = `
-                <div class="chat-item" onclick="openGame('snake')"><i class="fas fa-dragon" style="margin-right:10px;"></i> Yılan Oyunu</div>
-                <div class="chat-item" onclick="openGame('tic')"><i class="fas fa-times" style="margin-right:10px;"></i> XOX Oyunu</div>
+                <div class="chat-item" onclick="openGame('snake')"><i class="fas fa-dragon" style="margin-right:10px; color:var(--primary);"></i> Yılan Oyunu (Snake)</div>
+                <div class="chat-item" onclick="openGame('tic')"><i class="fas fa-times" style="margin-right:10px; color:var(--accent-purple);"></i> XOX Oyunu (Tic-Tac-Toe)</div>
             `;
         }
 
@@ -321,14 +547,14 @@
                 document.getElementById('activeChatSub').innerText = sub;
                 document.getElementById('activeAvatar').innerText = avt;
             };
-            div.innerHTML = `<div class="avatar">${avt}</div><div><div style="font-weight:bold; font-size:0.85rem;">${title}</div><div style="font-size:0.75rem; color:var(--text-muted);">${sub}</div></div>`;
+            div.innerHTML = `<div class="avatar">${avt}</div><div><div style="font-weight:bold; font-size:0.88rem;">${title}</div><div style="font-size:0.75rem; color:var(--text-muted);">${sub}</div></div>`;
             return div;
         }
 
-        /* MESAJLAŞMA & FOTOĞRAF & SES */
+        /* MESAJLAŞMA & MEDYA */
         function sendMessage() {
             const input = document.getElementById('messageInput');
-            if(!input.value.trim()) return;
+            if (!input.value.trim()) return;
             appendMessage(input.value, 'outgoing');
             input.value = '';
         }
@@ -337,13 +563,14 @@
             const box = document.getElementById('messagesContainer');
             const msg = document.createElement('div');
             msg.className = `message-bubble ${type}`;
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
-            if(isImage) {
-                msg.innerHTML = `<img src="${content}" class="message-img">`;
-            } else if(isAudio) {
-                msg.innerHTML = `<audio controls src="${content}"></audio>`;
+            if (isImage) {
+                msg.innerHTML = `<img src="${content}" class="message-img"><div class="message-time">${time}</div>`;
+            } else if (isAudio) {
+                msg.innerHTML = `<audio controls src="${content}" style="max-width:200px; height:32px;"></audio><div class="message-time">${time}</div>`;
             } else {
-                msg.innerText = content;
+                msg.innerHTML = `${content}<div class="message-time">${time}</div>`;
             }
             box.appendChild(msg);
             box.scrollTop = box.scrollHeight;
@@ -361,20 +588,22 @@
 
         async function toggleAudioRecord() {
             const btn = document.getElementById('recordBtn');
-            if(!isRecording) {
+            if (!isRecording) {
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-                        const audioUrl = URL.createObjectURL(blob);
-                        appendMessage(audioUrl, 'outgoing', false, true);
-                    };
-                    mediaRecorder.start();
-                    isRecording = true;
-                    btn.style.color = 'var(--accent-red)';
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+                        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                        mediaRecorder.onstop = () => {
+                            const blob = new Blob(audioChunks, { type: 'audio/mp3' });
+                            const audioUrl = URL.createObjectURL(blob);
+                            appendMessage(audioUrl, 'outgoing', false, true);
+                        };
+                        mediaRecorder.start();
+                        isRecording = true;
+                        btn.style.color = 'var(--accent-red)';
+                    } catch(err) { alert("Mikrofon izni verilmedi!"); }
                 }
             } else {
                 mediaRecorder.stop();
@@ -383,34 +612,42 @@
             }
         }
 
-        /* ARAMA VE GÖRÜNTÜLÜ ARAMA */
+        /* SESLİ & GÖRÜNTÜLÜ ARAMA */
         function startCall(type) {
-            if(!activeChat) { alert("Önce bir sohbet seçin!"); return; }
-            document.getElementById('callAvatar').innerText = activeChat.substring(0,2).toUpperCase();
+            if (!activeChat) { alert("Önce bir sohbet seçin!"); return; }
+            document.getElementById('callAvatar').innerText = activeChat.substring(0, 2).toUpperCase();
             document.getElementById('callTitle').innerText = `${activeChat} ${type === 'voice' ? 'Sesli' : 'Görüntülü'} Aranıyor...`;
             document.getElementById('callModal').style.display = 'flex';
         }
 
-        /* ARKADAŞ EKLEME */
+        /* ARKADAŞ EKLEME MODAL */
         function openAddFriendModal() { document.getElementById('addFriendModal').style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         
         function confirmAddFriend() {
-            const id = document.getElementById('friendIdInput').value.trim().replace('#','');
+            const id = document.getElementById('friendIdInput').value.trim().replace('#', '');
+            if (!id) return;
+
             let users = getUsersDB();
             let found = null;
 
-            for(let u in users) {
-                if(users[u].id === id) { found = u; break; }
+            for (let u in users) {
+                if (users[u].userId === id) { found = u; break; }
             }
 
-            if(found) {
-                if(found === currentUser) return alert("Kendi ID'nizi ekleyemezsiniz!");
-                users[currentUser].friends.push({ name: found, id: id });
+            if (found) {
+                if (found === currentUser) return alert("Kendi ID numaranızı ekleyemezsiniz!");
+                
+                let myFriends = users[currentUser].friends || [];
+                if (myFriends.some(f => f.id === id)) return alert("Bu kişi zaten arkadaş listenizde var!");
+
+                myFriends.push({ name: found, id: id });
+                users[currentUser].friends = myFriends;
                 saveUsersDB(users);
+
                 renderSidebarList();
                 closeModal('addFriendModal');
-                alert(`${found} arkadaş olarak eklendi!`);
+                alert(`${found} arkadaş listenize eklendi!`);
             } else {
                 alert("Kullanıcı Bulunamadı!");
             }
@@ -420,10 +657,10 @@
         function openGame(game) {
             document.getElementById('gameSnakeArea').style.display = game === 'snake' ? 'flex' : 'none';
             document.getElementById('gameTicArea').style.display = game === 'tic' ? 'flex' : 'none';
-            if(game === 'tic') initTicGame();
+            if (game === 'tic') initTicGame();
         }
 
-        // SNAKE GAME
+        // SNAKE
         let snakeCanvas = document.getElementById("snakeCanvas");
         let ctx = snakeCanvas.getContext("2d");
         let snake, food, dx, dy, gameInterval;
@@ -457,7 +694,7 @@
             snake.forEach(part => ctx.fillRect(part.x, part.y, 10, 10));
         }
 
-        // TIC TAC TOE GAME
+        // XOX
         let board = ["","","","","","","","",""];
         let turn = "X";
 
