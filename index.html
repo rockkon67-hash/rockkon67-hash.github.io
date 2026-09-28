@@ -433,7 +433,7 @@
                 <button type="submit" class="btn-submit" id="btn-login">Sign In</button>
             </form>
 
-            <!-- KAYIT FORMU (ID ALANI KALDIRILDI) -->
+            <!-- KAYIT FORMU (SADECE USERNAME VE PASSWORD) -->
             <form id="registerForm" style="display: none;">
                 <div class="form-group">
                     <label id="lbl-reg-user">Choose Username</label>
@@ -650,7 +650,7 @@
             users[username] = { password: password, userId: uniqueId, friends: [] };
             localStorage.setItem('cemtalk_users', JSON.stringify(users));
 
-            alert(`Hesabınız başarıyla oluşturuldu!\nSizin otomatik ID'niz: ${uniqueId}`);
+            alert(`Hesabınız başarıyla oluşturuldu!\nOtomatik üretilen özel ID'niz: ${uniqueId}`);
             tabLoginBtn.click();
             document.getElementById('loginUsername').value = username;
         });
