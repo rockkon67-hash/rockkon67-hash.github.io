@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CemTalk - ID Based Friends Chat</title>
+    <title>CemTalk - Secure Friends Chat</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -339,7 +339,7 @@
             font-size: 0.95rem;
         }
 
-        /* MODAL / PROFİL / İNSAN EKLEME */
+        /* MODALLAR */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -409,11 +409,11 @@
 </head>
 <body>
 
-    <!-- GİRİŞ / KAYIT EKRANI (ID BÖLÜMÜ YOKTUR) -->
+    <!-- GİRİŞ / KAYIT EKRANI -->
     <div class="auth-overlay" id="authOverlay">
         <div class="auth-card">
             <h2>CemTalk</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Unique ID Chat Network</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Secure Friends Chat</p>
             
             <div class="auth-tabs">
                 <button class="tab-btn active" id="tabLoginBtn">Sign In</button>
@@ -433,7 +433,7 @@
                 <button type="submit" class="btn-submit" id="btn-login">Sign In</button>
             </form>
 
-            <!-- KAYIT FORMU -->
+            <!-- KAYIT FORMU (ID ALANI KALDIRILDI) -->
             <form id="registerForm" style="display: none;">
                 <div class="form-group">
                     <label id="lbl-reg-user">Choose Username</label>
@@ -450,7 +450,7 @@
         </div>
     </div>
 
-    <!-- ARKADAŞ EKLEME MODALI (+ BUTONUNA BASINCA AÇILIR) -->
+    <!-- ARKADAŞ EKLEME MODALI -->
     <div class="modal-overlay" id="addFriendModal">
         <div class="modal-card">
             <h3 style="margin-bottom: 12px;"><i class="fas fa-user-plus"></i> Add Friend by Id</h3>
@@ -531,7 +531,6 @@
             </div>
         </div>
 
-        <!-- ARAMA & İNSAN EKLEME -->
         <div class="search-box">
             <div class="search-input-wrapper">
                 <i class="fas fa-search" style="color: var(--text-muted);"></i>
@@ -540,9 +539,7 @@
             <button class="btn-add-friend" onclick="openAddFriendModal()" title="Add Friend (+)"><i class="fas fa-plus"></i></button>
         </div>
 
-        <div class="chat-list" id="friendsChatList">
-            <!-- Eklenen arkadaşlar buraya gelecek -->
-        </div>
+        <div class="chat-list" id="friendsChatList"></div>
     </div>
 
     <!-- SOHBET ALANI -->
@@ -612,12 +609,10 @@
         let searchedUser = null;
         let myFriends = [];
 
-        // Sistem için Otomatik 6 Haneli ID Oluşturucu
         function generateUniqueId() {
             return Math.floor(100000 + Math.random() * 900000).toString();
         }
 
-        // Sekmeler Arası Geçiş
         tabLoginBtn.addEventListener('click', () => {
             tabLoginBtn.classList.add('active');
             tabRegisterBtn.classList.remove('active');
@@ -639,7 +634,6 @@
             } else { errorMsg.style.display = 'none'; }
         }
 
-        // HESAP OLUŞTURMA (ID girmeye gerek yoktur, sistem otomatik tanımlar)
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('regUsername').value.trim();
@@ -656,12 +650,11 @@
             users[username] = { password: password, userId: uniqueId, friends: [] };
             localStorage.setItem('cemtalk_users', JSON.stringify(users));
 
-            alert(`Hesabınız başarıyla oluşturuldu!\nSize atanan özel ID: ${uniqueId}`);
+            alert(`Hesabınız başarıyla oluşturuldu!\nSizin otomatik ID'niz: ${uniqueId}`);
             tabLoginBtn.click();
             document.getElementById('loginUsername').value = username;
         });
 
-        // GİRİŞ YAPMA
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
@@ -693,7 +686,6 @@
             authOverlay.style.display = 'flex';
         }
 
-        // (+) BUTONUNA BASILDIĞINDA ID İLE ARKADAŞ ARAMA
         function openAddFriendModal() {
             document.getElementById('addFriendModal').style.display = 'flex';
             document.getElementById('searchResultArea').style.display = 'none';
@@ -766,7 +758,6 @@
             alert(`${searchedUser.name} başarıyla eklendi!`);
         }
 
-        // PROFİL / AYARLAR
         function openProfileSettingsModal() {
             if(!currentUser) return;
             document.getElementById('modalMyName').innerText = currentUser;
@@ -814,7 +805,6 @@
             document.getElementById('activeChatAvatar').innerText = name.substring(0, 2).toUpperCase();
         }
 
-        // MESAJ GÖNDERME
         function sendMessage() {
             const text = messageInput.value.trim();
             if (text === '') return;
