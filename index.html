@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ahmet'in Günlüğü</title>
+  <title>Ahmet Modu v3</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,57 +13,63 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1e1e2f, #2d2b55);
+      background-color: #000;
       color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      text-align: center;
-      padding: 20px;
+      overflow: hidden;
+      position: relative;
     }
 
+    /* Arka plan video alanı */
+    .bg-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      opacity: 0.4;
+      object-fit: cover;
+    }
+
+    /* İçerik kartı */
     .card {
-      background: rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 2;
+      background: rgba(0, 0, 0, 0.65);
       backdrop-filter: blur(10px);
       border-radius: 20px;
       padding: 40px 30px;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      max-width: 550px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255, 71, 87, 0.5);
+      border: 2px solid #ff4757;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
+      font-size: 2.2rem;
+      margin-bottom: 15px;
       color: #ff4757;
       text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    .badge {
-      display: inline-block;
-      background-color: #ffa502;
-      color: #000;
-      font-weight: bold;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      margin-bottom: 25px;
     }
 
     .quote-box {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       min-height: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 30px;
+      margin: 20px 0;
       padding: 15px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
-      border-left: 4px solid #ff4757;
     }
 
     button {
@@ -71,56 +77,77 @@
       color: white;
       border: none;
       padding: 15px 30px;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: bold;
       border-radius: 30px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+      transition: transform 0.2s;
     }
 
     button:hover {
-      background-color: #ff6b81;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+      transform: scale(1.05);
     }
 
-    button:active {
-      transform: translateY(1px);
+    .audio-notice {
+      margin-top: 15px;
+      font-size: 0.8rem;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
 
+  <!-- Arka Plan Videosu -->
+  <video class="bg-video" id="myVideo" loop muted playsinline>
+    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+  </video>
+
+  <!-- Ses Dosyası (Sesi döngüye sokmak için loop eklendi) -->
+  <audio id="myAudio" loop>
+    <!-- Buraya kendi ses dosyanızın yolunu yazın -->
+    <source src="ses.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="card">
-    <h1>Ahmet Anları</h1>
-    <div class="badge">PRO NOOB</div>
+    <h1>Ahmet Gerçekleri</h1>
     
     <div class="quote-box" id="quote">
-      Yükleniyor...
+      Başlatmak ve sesi açmak için butona tıklayın!
     </div>
 
-    <button onclick="yeniMesaj()">Başka Bir Gerçek</button>
+    <button onclick="baslatVeDegistir()">Sesi Aç & Mesaj Değiştir</button>
+    <div class="audio-notice">Tarayıcı kuralları gereği ses tıklama ile başlar.</div>
   </div>
 
   <script>
     const mesajlar = [
       "Ahmet yine oyunda 0/15/0 gidiyor...",
-      "Ahmet salakça hareketlerde bugün bir numara!",
+      "Ahmet salakça hareketlerde bugün yine bir numara!",
       "Ahmet tam bir noob, klavyeye basmayı yeni öğreniyor.",
       "Ahmet'in IQ seviyesi oda sıcaklığının altında.",
       "Ahmet yine yanlış oyunu indirdi...",
       "Ahmet'e oyunda yardım etmek imkansız bir görev.",
-      "Ahmet tam bir profesyonel noob!"
+      "Ahmet tam bir profesyonel noob!",
+      "Ahmet 'Start' düğmesini bulmak için 10 dakika harcadı."
     ];
 
-    function yeniMesaj() {
-      const rastgele = Math.floor(Math.random() * mesajlar.length);
-      document.getElementById('quote').innerText = mesajlar[rastgele];
-    }
+    let basladi = false;
 
-    // Sayfa açıldığında rastgele bir mesaj göster
-    yeniMesaj();
+    function baslatVeDegistir() {
+      const audio = document.getElementById('myAudio');
+      const video = document.getElementById('myVideo');
+
+      // İlk tıklamada ses ve videoyu başlat
+      if (!basladi) {
+        audio.play().catch(e => console.log("Ses oynatma hatası:", e));
+        video.play();
+        basladi = true;
+      }
+
+      // Rastgele mesaj seç
+      const rastgeleIndex = Math.floor(Math.random() * mesajlar.length);
+      document.getElementById('quote').innerText = mesajlar[rastgeleIndex];
+    }
   </script>
 
 </body>
