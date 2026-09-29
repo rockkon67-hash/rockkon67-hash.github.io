@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ahmet Modu v3</title>
+  <title>Ahmet Modu v4 - 100 Gerçek</title>
   <style>
     * {
       box-sizing: border-box;
@@ -23,7 +23,6 @@
       position: relative;
     }
 
-    /* Arka plan video alanı */
     .bg-video {
       position: absolute;
       top: 50%;
@@ -34,42 +33,54 @@
       height: auto;
       z-index: 1;
       transform: translate(-50%, -50%);
-      opacity: 0.4;
+      opacity: 0.35;
       object-fit: cover;
     }
 
-    /* İçerik kartı */
     .card {
       position: relative;
       z-index: 2;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
       border-radius: 20px;
       padding: 40px 30px;
-      max-width: 550px;
+      max-width: 600px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 0 30px rgba(255, 71, 87, 0.5);
+      box-shadow: 0 0 35px rgba(255, 71, 87, 0.6);
       border: 2px solid #ff4757;
     }
 
     h1 {
       font-size: 2.2rem;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       color: #ff4757;
       text-transform: uppercase;
     }
 
+    .badge {
+      display: inline-block;
+      background-color: #ffa502;
+      color: #000;
+      font-weight: bold;
+      padding: 4px 14px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+    }
+
     .quote-box {
-      font-size: 1.4rem;
-      min-height: 100px;
+      font-size: 1.3rem;
+      min-height: 110px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 20px 0;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
+      margin: 15px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      border-left: 5px solid #ff4757;
+      line-height: 1.5;
     }
 
     button {
@@ -81,16 +92,18 @@
       font-weight: bold;
       border-radius: 30px;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
     }
 
     button:hover {
+      background-color: #ff6b81;
       transform: scale(1.05);
     }
 
-    .audio-notice {
+    .counter {
       margin-top: 15px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: #aaa;
     }
   </style>
@@ -102,51 +115,144 @@
     <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
   </video>
 
-  <!-- Ses Dosyası (Sesi döngüye sokmak için loop eklendi) -->
+  <!-- Arka Plan Sesi -->
   <audio id="myAudio" loop>
-    <!-- Buraya kendi ses dosyanızın yolunu yazın -->
     <source src="ses.mp3" type="audio/mpeg">
   </audio>
 
   <div class="card">
     <h1>Ahmet Gerçekleri</h1>
+    <div class="badge">100 / 100 NOOB KAPASİTESİ</div>
     
     <div class="quote-box" id="quote">
-      Başlatmak ve sesi açmak için butona tıklayın!
+      Başlatmak ve 100 efsane mesajı görmek için butona bas!
     </div>
 
     <button onclick="baslatVeDegistir()">Sesi Aç & Mesaj Değiştir</button>
-    <div class="audio-notice">Tarayıcı kuralları gereği ses tıklama ile başlar.</div>
+    <div class="counter" id="counter">Gösterilen Mesaj: 0 / 100</div>
   </div>
 
   <script>
     const mesajlar = [
-      "Ahmet yine oyunda 0/15/0 gidiyor...",
-      "Ahmet salakça hareketlerde bugün yine bir numara!",
-      "Ahmet tam bir noob, klavyeye basmayı yeni öğreniyor.",
-      "Ahmet'in IQ seviyesi oda sıcaklığının altında.",
-      "Ahmet yine yanlış oyunu indirdi...",
-      "Ahmet'e oyunda yardım etmek imkansız bir görev.",
-      "Ahmet tam bir profesyonel noob!",
-      "Ahmet 'Start' düğmesini bulmak için 10 dakika harcadı."
+      "1. Ahmet yine oyunda 0/15/0 gidiyor...",
+      "2. Ahmet salakça hareketlerde bugün bir numara!",
+      "3. Ahmet tam bir noob, klavyeye basmayı yeni öğreniyor.",
+      "4. Ahmet'in IQ seviyesi oda sıcaklığının altında.",
+      "5. Ahmet yine yanlış oyunu indirdi...",
+      "6. Ahmet'e oyunda yardım etmek imkansız bir görev.",
+      "7. Ahmet tam bir profesyonel noob!",
+      "8. Ahmet 'Start' düğmesini bulmak için 10 dakika harcadı.",
+      "9. Ahmet takıma girince karşı taraf otomatik kazanıyor.",
+      "10. Ahmet yine kulaklığı ters takmış dinliyor.",
+      "11. Ahmet fareyi hareket ettirirken ekranı çeviriyor.",
+      "12. Ahmet'in hamlelerini yapay zeka bile tahmin edemez, çünkü mantık yok.",
+      "13. Ahmet rehbere 'Kral' diye kaydedildi ama oyunda piyon bile değil.",
+      "14. Ahmet'in pingi 5 ama hareketi 500 ms rötar yapıyor.",
+      "15. Ahmet tutorial (öğretici) modunda bile öldü.",
+      "16. Ahmet bilgisayarı hızlandırsın diye kasa üstüne su döktü.",
+      "17. Ahmet klan maçında kendi arkadaşını vurdu.",
+      "18. Ahmet sesli chatte sadece nefes alma sesi çıkarıyor.",
+      "19. Ahmet klavyede Space tuşunu bulamadı.",
+      "20. Ahmet oyunu kaybettiğinde modeme uçan tekme atıyor.",
+      "21. Ahmet'e harita verilsen kendi evini bulamaz.",
+      "22. Ahmet satrançta piyonla kendi şahını yedi.",
+      "23. Ahmet'in oynadığı karakter bile pes etmek istiyor.",
+      "24. Ahmet 'AFK kalıyorum' deyip aslında oynasa daha çok katkısı olur.",
+      "25. Ahmet el bombasını attı, bomba geri sekip kendi kafasına düştü.",
+      "26. Ahmet'in bilgisayarında ekran kartı Ahmet'e acıyor.",
+      "27. Ahmet oyun yüklenirken bekleme ekranında takıldı.",
+      "28. Ahmet 'Shift' tuşuna basınca karakterinin koştuğunu 3 yıl sonra öğrendi.",
+      "29. Ahmet oyunda duvarla kapışıp duvara yenildi.",
+      "30. Ahmet takım arkadaşına 'Beni izle' dedi ve uçurumdan aşağı atladı.",
+      "31. Ahmet oyuna girince sunucu çöküyor.",
+      "32. Ahmet'e silahsız rakip verdiler, yine de kaybetti.",
+      "33. Ahmet bilgisayarı kapama tuşuna basıp 'Aaa elektirik gitti' dedi.",
+      "34. Ahmet strateji oyununda kendi üssünü yaktı.",
+      "35. Ahmet'in yaptığı tek kombo 'Alt + F4'.",
+      "36. Ahmet oyunda yönünü kaybetmemek için ekrana harita yapıştırdı.",
+      "37. Ahmet kulaklık kapalıyken 'Ses kastım' diyor.",
+      "38. Ahmet 'Çok az kaldı kazanıyoruz' dediğinde skor 0-15'ti.",
+      "39. Ahmet'in tepki süresi 3-5 iş günü sürüyor.",
+      "40. Ahmet farenin pili bitince ekranı parmağıyla kaydırmaya çalıştı.",
+      "41. Ahmet rank kasarken Bronz 5'ten Unranked'a düştü.",
+      "42. Ahmet oyunda pusu kurdu ama pusuya kendi düştü.",
+      "43. Ahmet sağlık paketini tam canı varken içti.",
+      "44. Ahmet oyunu duraklatıp 'Mola' verdi ama online oyun oynuyordu.",
+      "45. Ahmet haritada düz yolda yürürken kayboldu.",
+      "46. Ahmet'in mikrofona cips çiğneme sesi geliyor.",
+      "47. Ahmet takım kaptanı oldu, klanı feshetti.",
+      "48. Ahmet bilgisayar kasasını sandalye yaptı.",
+      "49. Ahmet space basarak uçmaya çalışıyor.",
+      "50. Ahmet ekrandaki sineği vurmak için monitöre vurdu.",
+      "51. Ahmet 'Bende lag var' dedi ama interneti fiberdi.",
+      "52. Ahmet oyunda kapıyı açamadığı için oyunu sildi.",
+      "53. Ahmet düşmana mermi yerine sağlık paketi attı.",
+      "54. Ahmet'in fare pedi ters duruyor.",
+      "55. Ahmet klavyedeki ışıklar yanınca bilgisayar hızlandı sandı.",
+      "56. Ahmet oyunda 'Ben taşıyorum' dediğinde skor tabelasında en alttaydı.",
+      "57. Ahmet kendi gölgesini görüp ateş etti.",
+      "58. Ahmet'in bilgisayarı Ahmet oyunu açmasın diye güncelleme yapıyor.",
+      "59. Ahmet arabayla düz yolda giderken takla attı.",
+      "60. Ahmet'e oyunda 'Pusma' dediler, gidip duvara karşı durdu.",
+      "61. Ahmet oyun Türkçe olmasına rağmen hiçbir görevi anlamadı.",
+      "62. Ahmet kulaklığı çenesine takıp konuşuyor.",
+      "63. Ahmet monitörün parlaklığını açınca yeteneği artacak sanıyor.",
+      "64. Ahmet 'Ben profesyonelim' dedikten 2 saniye sonra öldü.",
+      "65. Ahmet oyundaki NPC'ye sinirlenip küstü.",
+      "66. Ahmet 'W' tuşunu kırdı çünkü sürekli ileri koşup ölüyor.",
+      "67. Ahmet mini haritaya bakarken önündeki duvara çarptı.",
+      "68. Ahmet oyunu kaybetmemek için bilgisayarın fişini çekti.",
+      "69. Ahmet takımına moral vermek için 'Zaten yenilecektik' dedi.",
+      "70. Ahmet'in kulaklığından dışarı ses, içeri hiç ses gitmiyor.",
+      "71. Ahmet sandık açtı, içinden yine noob çıktı.",
+      "72. Ahmet mikrofonu açık unutup şarkı söyledi.",
+      "73. Ahmet oyunda 'Neredesiniz?' dediğinde arkadaşları yanındaydı.",
+      "74. Ahmet tam düşmanı vuracakken faresi masadan düştü.",
+      "75. Ahmet 'E' tuşuna basmak yerine bilgisayarı yeniden başlattı.",
+      "76. Ahmet el bombasını kurup üstüne oturdu.",
+      "77. Ahmet'in gaming koltuğu var ama hala noob.",
+      "78. Ahmet oyunda su birikintisinde boğuldu.",
+      "79. Ahmet skin aldı ama yetenek gelmedi.",
+      "80. Ahmet haritanın dışına çıkıp oyundan düştü.",
+      "81. Ahmet 'Bana güvenin' dediği gün bütün klan eridi.",
+      "82. Ahmet farenin DPI ayarını değiştireyim derken sistemi çökertti.",
+      "83. Ahmet sohbet kutusuna şifresini yazdı.",
+      "84. Ahmet 'FPS düşüyor' dedi, meğer gözünü kapatıyormuş.",
+      "85. Ahmet oyundaki botlara bile yenildi.",
+      "86. Ahmet'e oyunda yol tarif ettiler, haritadan çıktı.",
+      "87. Ahmet zıplama tuşuna basarken kendisi de sandalyede zıplıyor.",
+      "88. Ahmet rakibe sinirlenip monitöre kafa attı.",
+      "89. Ahmet oyunu kurarken kullanım şartlarını okudu ama oynamayı öğrenemedi.",
+      "90. Ahmet'in oynadığı maçta sunucu 'Dayanamıyorum' deyip kapandı.",
+      "91. Ahmet 'Sağ sol yap' dediklerinde kafasını sallıyor.",
+      "92. Ahmet mağazadan yanlış eşyayı alıp parayı bitirdi.",
+      "93. Ahmet pusudayken hapşırdı ve yerini belli etti.",
+      "94. Ahmet 'Gözüm kapalı oynarım' dedi ve gerçekten öyle oynadı (0 kill).",
+      "95. Ahmet oyunda arkadaşını kurtarmak isterken ikisini de yaktı.",
+      "96. Ahmet'e klan logosu yaptırdılar, paint'ten çöp adam çizdi.",
+      "97. Ahmet'in oyundaki adı 'Kral_Ahmet' ama oyundaki rolü kurban.",
+      "98. Ahmet oyunda merdivenden çıkarken düştü.",
+      "99. Ahmet'in bilgisayarı bile Ahmet oyunu açınca fanları son hız çalıştırıp ağlıyor.",
+      "100. VE SON GERÇEK: Ahmet ne kadar denese de efsanevi bir NOOB olarak kalacak!"
     ];
 
     let basladi = false;
+    let tiklama = 0;
 
     function baslatVeDegistir() {
       const audio = document.getElementById('myAudio');
       const video = document.getElementById('myVideo');
 
-      // İlk tıklamada ses ve videoyu başlat
       if (!basladi) {
-        audio.play().catch(e => console.log("Ses oynatma hatası:", e));
+        audio.play().catch(e => console.log("Ses hatası:", e));
         video.play();
         basladi = true;
       }
 
-      // Rastgele mesaj seç
+      tiklama++;
       const rastgeleIndex = Math.floor(Math.random() * mesajlar.length);
       document.getElementById('quote').innerText = mesajlar[rastgeleIndex];
+      document.getElementById('counter').innerText = "Gösterilen Mesaj Tıklama Sayısı: " + tiklama;
     }
   </script>
 
