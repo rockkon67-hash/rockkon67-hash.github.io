@@ -75,7 +75,7 @@
         /* SIDEBAR LIST */
         .sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .user-header { padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.4); }
-        .avatar { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #1d4ed8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; }
+        .avatar { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #1d4ed8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; flex-shrink: 0; }
         
         .chat-list { flex: 1; overflow-y: auto; }
         .chat-item { display: flex; align-items: center; padding: 12px 16px; gap: 12px; cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.02); transition: 0.2s; }
@@ -95,7 +95,7 @@
         .chat-input-area { padding: 16px; background: var(--bg-panel); border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
         .chat-input { flex: 1; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 16px; color: white; outline: none; font-size: 0.95rem; }
 
-        .btn-icon { width: 40px; height: 40px; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; transition: 0.2s; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; transition: 0.2s; flex-shrink: 0; }
         .btn-icon:hover { background: rgba(255, 255, 255, 0.12); }
 
         /* GAME AREA */
@@ -162,16 +162,12 @@
             <!-- ADMIN GİRİŞ FORMU -->
             <form id="adminForm" style="display: none;">
                 <div class="form-group">
-                    <label>Kullanıcı Adınız</label>
-                    <input type="text" id="adminUsername" class="auth-input" required>
+                    <label>Admin Kullanıcı Adı</label>
+                    <input type="text" id="adminUsername" class="auth-input" placeholder="Kullanıcı adınızı girin" required>
                 </div>
                 <div class="form-group">
-                    <label>Kendi Şifreniz</label>
-                    <input type="password" id="adminUserPassword" class="auth-input" required>
-                </div>
-                <div class="form-group">
-                    <label>Özel Admin Kodu (cem veya çınar)</label>
-                    <input type="password" id="adminCode" class="auth-input" placeholder="cem veya çınar" required>
+                    <label>Admin Şifresi</label>
+                    <input type="password" id="adminUserPassword" class="auth-input" placeholder="Şifrenizi girin" required>
                 </div>
                 <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--accent-purple), #7c3aed);"><i class="fas fa-lock"></i> Admin Paneline Giriş Yap</button>
             </form>
@@ -180,7 +176,7 @@
         </div>
     </div>
 
-    <!-- LEFT NAVBAR NAVIGASYON -->
+    <!-- LEFT NAVBAR NAVİGASYON -->
     <div class="app-nav">
         <div class="nav-icon active" id="tabChats" onclick="switchMainTab('chats')" title="Sohbetler"><i class="fas fa-comment-dots"></i></div>
         <div class="nav-icon" id="tabGroups" onclick="switchMainTab('groups')" title="Gruplar"><i class="fas fa-users"></i></div>
@@ -190,14 +186,14 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="user-header">
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                 <div class="avatar" id="myAvatar">?</div>
-                <div>
-                    <div id="myProfileName" style="font-weight: 700; font-size:0.9rem;">Giriş Yapılmadı</div>
+                <div style="overflow: hidden;">
+                    <div id="myProfileName" style="font-weight: 700; font-size:0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Giriş Yapılmadı</div>
                     <div id="myProfileId" style="font-size: 0.75rem; color: #38bdf8;">ID: #------</div>
                 </div>
             </div>
-            <div style="display: flex; gap: 6px;">
+            <div style="display: flex; gap: 6px; flex-shrink: 0;">
                 <button class="btn-icon" id="adminBtn" title="Admin Paneli" style="display: none; background: var(--accent-purple);" onclick="openAdminModal()"><i class="fas fa-shield-alt"></i></button>
                 <button class="btn-icon" title="Çıkış Yap" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
             </div>
@@ -268,7 +264,7 @@
     <!-- ADMIN MODALI -->
     <div class="modal-overlay" id="adminModal">
         <div class="modal-card" style="width: 480px;">
-            <h3 style="margin-bottom: 6px; color: var(--accent-purple); display:flex; align-items:center; justify-center; gap:8px;">
+            <h3 style="margin-bottom: 6px; color: var(--accent-purple); display:flex; align-items:center; justify-content:center; gap:8px;">
                 <i class="fas fa-user-shield"></i> Admin Yönetim Paneli
             </h3>
             <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 16px;">Sistemde Kayıtlı Tüm Kullanıcılar ve Şifreleri:</p>
@@ -364,7 +360,7 @@
             const p = document.getElementById('regPassword').value;
             let users = getUsersDB();
 
-            if (users[u]) { showError('Bu kullanıcı adı zaten alımış!'); return; }
+            if (users[u]) { showError('Bu kullanıcı adı zaten alınmış!'); return; }
 
             const newId = Math.floor(100000 + Math.random() * 900000).toString();
             users[u] = { password: p, userId: newId, isAdmin: false, isBanned: false, friends: [], groups: ['Yazılımcılar', 'Oyun Kovanı'] };
@@ -388,17 +384,11 @@
             loginSuccess(u, users[u]);
         });
 
-        /* ADMIN GİRİŞİ (cem VEYA çınar) */
+        /* ADMIN GİRİŞİ */
         adminForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const u = document.getElementById('adminUsername').value.trim();
             const p = document.getElementById('adminUserPassword').value;
-            const code = document.getElementById('adminCode').value.trim().toLowerCase();
-
-            if (code !== 'cem' && code !== 'çınar') {
-                showError('Özel kod hatalı! Geçerli bir kod giriniz.');
-                return;
-            }
 
             let users = getUsersDB();
 
