@@ -19,7 +19,6 @@
             --accent-green: #10b981;
             --accent-red: #ef4444;
             --accent-purple: #8b5cf6;
-            --accent-purple-glow: rgba(139, 92, 246, 0.4);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.08);
@@ -28,7 +27,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
 
-        /* LOADING SPLASH */
         #appLoader {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #060911; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -43,7 +41,6 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 
-        /* AUTH OVERLAY */
         .auth-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: radial-gradient(circle at center, rgba(17, 24, 39, 0.95), rgba(9, 13, 22, 0.98));
@@ -60,7 +57,7 @@
         .auth-tabs { display: flex; margin: 20px 0; background: rgba(15, 23, 42, 0.6); padding: 4px; border-radius: 12px; border: 1px solid var(--border-color); }
         .tab-btn { flex: 1; padding: 8px 4px; background: none; border: none; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.2s; }
         .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 0 12px var(--primary-glow); }
-        .tab-btn.admin-tab.active { background: var(--accent-purple); box-shadow: 0 0 12px var(--accent-purple-glow); }
+        .tab-btn.admin-tab.active { background: var(--accent-purple); }
         
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
@@ -68,21 +65,16 @@
         .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .error-msg { color: var(--accent-red); font-size: 0.85rem; margin-top: 10px; display: none; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 8px; }
 
-        /* LEFT NAVIGATION BAR */
         .app-nav { width: 68px; background: #070a12; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; padding-top: 16px; gap: 16px; }
         .nav-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
         .nav-icon.active { background: var(--primary); color: white; box-shadow: 0 0 12px var(--primary-glow); }
 
-        /* SIDEBAR LIST */
         .sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .user-header { padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.4); }
         .avatar { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #1d4ed8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; flex-shrink: 0; }
         
         .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { display: flex; align-items: center; padding: 12px 16px; gap: 12px; cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.02); transition: 0.2s; }
-        .chat-item:hover, .chat-item.active { background: rgba(255, 255, 255, 0.05); }
 
-        /* MAIN CHAT AREA */
         .main-chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-chat); position: relative; }
         .chat-header { height: 68px; padding: 0 20px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         
@@ -90,15 +82,32 @@
         .message-bubble { max-width: 65%; padding: 12px 16px; border-radius: 16px; font-size: 0.92rem; line-height: 1.4; word-break: break-word; }
         .message-bubble.incoming { align-self: flex-start; background: var(--bg-bubble-other); border-bottom-left-radius: 4px; }
         .message-bubble.outgoing { align-self: flex-end; background: var(--bg-bubble-user); border-bottom-right-radius: 4px; }
+        .message-bubble img { max-width: 100%; border-radius: 12px; margin-top: 5px; }
         .message-time { font-size: 0.68rem; opacity: 0.7; margin-top: 4px; text-align: right; }
 
-        .chat-input-area { padding: 16px; background: var(--bg-panel); border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
+        .chat-input-area { padding: 16px; background: var(--bg-panel); border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; position: relative; }
         .chat-input { flex: 1; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 16px; color: white; outline: none; font-size: 0.95rem; }
 
         .btn-icon { width: 40px; height: 40px; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.05); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; transition: 0.2s; flex-shrink: 0; }
         .btn-icon:hover { background: rgba(255, 255, 255, 0.12); }
 
-        /* MODALS */
+        /* STICKER PANELI */
+        .sticker-picker {
+            position: absolute; bottom: 75px; left: 16px; background: var(--bg-panel); border: 1px solid var(--border-color);
+            padding: 12px; border-radius: 16px; display: none; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100;
+        }
+        .sticker-item { cursor: pointer; text-align: center; transition: transform 0.2s; }
+        .sticker-item:hover { transform: scale(1.2); }
+
+        /* ARAMA VE VİDEO MODALI */
+        .call-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9);
+            z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .video-container { display: flex; gap: 20px; margin-bottom: 20px; }
+        video { width: 320px; height: 240px; background: #000; border-radius: 16px; border: 2px solid var(--border-color); object-fit: cover; }
+
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 3000; display: none; align-items: center; justify-content: center; }
         .modal-card { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 28px; border-radius: 20px; width: 420px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .admin-user-item { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.8); padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); text-align: left; }
@@ -106,14 +115,13 @@
 </head>
 <body>
 
-    <!-- YÜKLENİYOR EKRANI -->
     <div id="appLoader">
         <div class="spinner-outer"><div class="spinner-inner"></div></div>
         <h3 style="margin-top: 15px; color: var(--primary); font-weight: 800; letter-spacing: 2px;">CEMTALK</h3>
         <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Ağ Sinyali Kuruluyor...</p>
     </div>
 
-    <!-- GİRİŞ / KAYIT / ADMIN EKRANI -->
+    <!-- GİRİŞ EKRANI -->
     <div class="auth-overlay" id="authOverlay">
         <div class="auth-card">
             <h2>CemTalk</h2>
@@ -125,7 +133,6 @@
                 <button class="tab-btn admin-tab" id="tabAdminBtn"><i class="fas fa-shield-alt"></i> Admin</button>
             </div>
 
-            <!-- GİRİŞ -->
             <form id="loginForm">
                 <div class="form-group">
                     <label>Kullanıcı Adı</label>
@@ -138,7 +145,6 @@
                 <button type="submit" class="btn-submit"><i class="fas fa-sign-in-alt"></i> Giriş Yap</button>
             </form>
 
-            <!-- KAYIT -->
             <form id="registerForm" style="display: none;">
                 <div class="form-group">
                     <label>Kullanıcı Adı</label>
@@ -151,15 +157,14 @@
                 <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--accent-green), #059669);"><i class="fas fa-user-plus"></i> Hesap Oluştur</button>
             </form>
 
-            <!-- ADMIN -->
             <form id="adminForm" style="display: none;">
                 <div class="form-group">
                     <label>Kullanıcı Adınız</label>
                     <input type="text" id="adminUsername" class="auth-input" required>
                 </div>
                 <div class="form-group">
-                    <label>Admin Şifresi (cem / cinar)</label>
-                    <input type="password" id="adminKeyInput" class="auth-input" required>
+                    <label>Admin Şifresi</label>
+                    <input type="password" id="adminKeyInput" class="auth-input" placeholder="Şifrenizi girin..." required>
                 </div>
                 <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--accent-purple), #7c3aed);"><i class="fas fa-lock"></i> Admin Paneline Giriş Yap</button>
             </form>
@@ -168,19 +173,27 @@
         </div>
     </div>
 
-    <!-- SOL NAV -->
+    <!-- ARAMA MODALI -->
+    <div class="call-modal" id="callModal">
+        <h3 id="callStatusText" style="margin-bottom: 20px; color: #fff;">Aranıyor...</h3>
+        <div class="video-container">
+            <video id="localVideo" autoplay muted></video>
+            <video id="remoteVideo" autoplay></video>
+        </div>
+        <button class="btn-icon" style="background: var(--accent-red); width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem;" onclick="endCall()"><i class="fas fa-phone-slash"></i></button>
+    </div>
+
     <div class="app-nav">
         <div class="nav-icon active"><i class="fas fa-comment-dots"></i></div>
     </div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="user-header">
             <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                 <div class="avatar" id="myAvatar">?</div>
                 <div style="overflow: hidden;">
                     <div id="myProfileName" style="font-weight: 700; font-size:0.9rem;">Giriş Yapılmadı</div>
-                    <div id="myProfileId" style="font-size: 0.75rem; color: #38bdf8; cursor: pointer;" onclick="copyMyId()" title="Kopyalamak için tıkla">ID: #------ <i class="fas fa-copy"></i></div>
+                    <div id="myProfileId" style="font-size: 0.75rem; color: #38bdf8; cursor: pointer;" onclick="copyMyId()" title="Kopyalamak için tıkla">ID: Sunucuya Bağlanılıyor... <i class="fas fa-copy"></i></div>
                 </div>
             </div>
             <div style="display: flex; gap: 6px;">
@@ -201,7 +214,6 @@
         </div>
     </div>
 
-    <!-- SOHBET ALANI -->
     <div class="main-chat-area">
         <div class="chat-header">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -211,20 +223,40 @@
                     <div id="activeChatSub" style="font-size: 0.75rem; color: var(--text-muted);">Bağlantı Bekleniyor</div>
                 </div>
             </div>
+            <!-- ARAMA BUTONLARI -->
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-icon" style="background: var(--accent-green);" onclick="startCall(false)" title="Sesli Arama"><i class="fas fa-phone"></i></button>
+                <button class="btn-icon" style="background: var(--primary);" onclick="startCall(true)" title="Görüntülü Arama"><i class="fas fa-video"></i></button>
+            </div>
         </div>
 
         <div class="messages-container" id="messagesContainer"></div>
 
+        <!-- STICKER PANELI -->
+        <div class="sticker-picker" id="stickerPicker">
+            <div class="sticker-item" onclick="sendSticker('🔥')">🔥</div>
+            <div class="sticker-item" onclick="sendSticker('😂')">😂</div>
+            <div class="sticker-item" onclick="sendSticker('👍')">👍</div>
+            <div class="sticker-item" onclick="sendSticker('❤️')">❤️</div>
+            <div class="sticker-item" onclick="sendSticker('😎')">😎</div>
+            <div class="sticker-item" onclick="sendSticker('🎉')">🎉</div>
+            <div class="sticker-item" onclick="sendSticker('💀')">💀</div>
+            <div class="sticker-item" onclick="sendSticker('🚀')">🚀</div>
+        </div>
+
         <div class="chat-input-area">
+            <button class="btn-icon" onclick="toggleStickers()" title="Sticker"><i class="fas fa-smile"></i></button>
+            <button class="btn-icon" onclick="document.getElementById('imageInput').click()" title="Fotoğraf Gönder"><i class="fas fa-image"></i></button>
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="sendImage(this)">
+            
             <input type="text" class="chat-input" id="messageInput" placeholder="Mesajınızı yazın..." onkeypress="if(event.key==='Enter') sendMessage()">
             <button class="btn-icon" style="background: var(--primary);" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- MODAL - ADMIN -->
     <div class="modal-overlay" id="adminModal">
         <div class="modal-card" style="width: 480px;">
-            <h3 style="margin-bottom: 12px; color: var(--accent-purple);"><i class="fas fa-user-shield"></i> Admin Paneli (Kayıtlı Cihaz Hesapları)</h3>
+            <h3 style="margin-bottom: 12px; color: var(--accent-purple);"><i class="fas fa-user-shield"></i> Admin Paneli</h3>
             <div id="adminUserList" style="max-height: 300px; overflow-y: auto; margin-bottom: 16px;"></div>
             <button onclick="closeModal('adminModal')" class="btn-submit" style="background:#334155;">Kapat</button>
         </div>
@@ -233,6 +265,8 @@
     <script>
         let peer = null;
         let conn = null;
+        let mediaCall = null;
+        let localStream = null;
         let currentUser = null;
         let currentUserId = null;
         let isAdmin = false;
@@ -244,7 +278,6 @@
             }, 500);
         });
 
-        // TAB GEÇİŞLERİ
         const tabLoginBtn = document.getElementById('tabLoginBtn');
         const tabRegisterBtn = document.getElementById('tabRegisterBtn');
         const tabAdminBtn = document.getElementById('tabAdminBtn');
@@ -270,11 +303,8 @@
             else { errorMsg.style.display = 'none'; }
         }
 
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('cemtalk_users') || '{}');
-        }
+        function getUsers() { return JSON.parse(localStorage.getItem('cemtalk_users') || '{}'); }
 
-        // KAYIT
         registerForm.onsubmit = (e) => {
             e.preventDefault();
             const u = document.getElementById('regUsername').value.trim();
@@ -283,7 +313,7 @@
 
             if (users[u]) return showError('Bu kullanıcı adı alınmış!');
 
-            const newId = Math.floor(100000 + Math.random() * 900000).toString();
+            const newId = 'cemtalk-' + Math.floor(100000 + Math.random() * 900000).toString();
             users[u] = { password: p, userId: newId, isAdmin: false };
             localStorage.setItem('cemtalk_users', JSON.stringify(users));
 
@@ -291,21 +321,16 @@
             showTab(tabLoginBtn, loginForm);
         };
 
-        // GİRİŞ
         loginForm.onsubmit = (e) => {
             e.preventDefault();
             const u = document.getElementById('loginUsername').value.trim();
             const p = document.getElementById('loginPassword').value;
             const users = getUsers();
 
-            if (!users[u] || users[u].password !== p) {
-                return showError('Kullanıcı adı veya şifre yanlış!');
-            }
-
+            if (!users[u] || users[u].password !== p) return showError('Kullanıcı adı veya şifre yanlış!');
             loginSuccess(u, users[u]);
         };
 
-        // ADMIN GİRİŞ
         adminForm.onsubmit = (e) => {
             e.preventDefault();
             const u = document.getElementById('adminUsername').value.trim();
@@ -314,7 +339,7 @@
             if (['cinar', 'çınar', 'cem'].includes(key)) {
                 const users = getUsers();
                 if (!users[u]) {
-                    const newId = Math.floor(100000 + Math.random() * 900000).toString();
+                    const newId = 'cemtalk-' + Math.floor(100000 + Math.random() * 900000).toString();
                     users[u] = { password: key, userId: newId, isAdmin: true };
                 } else {
                     users[u].isAdmin = true;
@@ -332,55 +357,79 @@
             isAdmin = userData.isAdmin || false;
 
             document.getElementById('myProfileName').innerText = currentUser;
-            document.getElementById('myProfileId').innerText = `ID: #${currentUserId}`;
             document.getElementById('myAvatar').innerText = currentUser.substring(0, 2).toUpperCase();
             document.getElementById('adminBtn').style.display = isAdmin ? 'flex' : 'none';
             document.getElementById('authOverlay').style.display = 'none';
 
-            // PEERJS SİNYALİNİ BAŞLAT
             initPeer();
         }
 
         function initPeer() {
-            peer = new Peer(currentUserId);
-
-            peer.on('open', (id) => {
-                console.log('PeerJS Hazır, ID:', id);
+            peer = new Peer(currentUserId, {
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' }
+                    ]
+                }
             });
 
-            // KARŞI TARAFTAN BAĞLANTI GELİRSE
+            peer.on('open', (id) => {
+                document.getElementById('myProfileId').innerHTML = `ID: #${id} <i class="fas fa-copy"></i>`;
+            });
+
             peer.on('connection', (connection) => {
                 conn = connection;
                 setupConnectionUI();
             });
+
+            // GELEN ARAMALARI YAKALAMA
+            peer.on('call', (call) => {
+                if (confirm('Gelen arama var, kabul ediyor musunuz?')) {
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+                        localStream = stream;
+                        document.getElementById('localVideo').srcObject = stream;
+                        document.getElementById('callModal').style.display = 'flex';
+                        document.getElementById('callStatusText').innerText = 'Görüşme Başladı';
+                        
+                        call.answer(stream);
+                        mediaCall = call;
+
+                        call.on('stream', (remoteStream) => {
+                            document.getElementById('remoteVideo').srcObject = remoteStream;
+                        });
+                    });
+                }
+            });
         }
 
-        // ARKADAŞA BAĞLAN
         window.connectToFriend = () => {
             const friendId = document.getElementById('friendIdInput').value.trim().replace('#', '');
             if (!friendId) return alert('Lütfen bir ID girin!');
             if (friendId === currentUserId) return alert('Kendi ID numaranıza bağlanamazsınız!');
 
             document.getElementById('activeChatSub').innerText = "Bağlantı Kuruluyor...";
-            conn = peer.connect(friendId);
+            conn = peer.connect(friendId, { reliable: true });
             setupConnectionUI();
         };
 
         function setupConnectionUI() {
+            if (!conn) return;
+
             conn.on('open', () => {
-                document.getElementById('activeChatName').innerText = `Kullanıcı (#${conn.peer})`;
+                document.getElementById('activeChatName').innerText = `Kullanıcı (${conn.peer})`;
                 document.getElementById('activeChatSub').innerText = "🟢 Canlı Bağlantı Kuruldu";
                 document.getElementById('activeChatSub').style.color = "var(--accent-green)";
                 document.getElementById('activeAvatar').innerText = "C";
             });
 
             conn.on('data', (data) => {
-                appendMessage(data, 'incoming');
-            });
-
-            conn.on('close', () => {
-                document.getElementById('activeChatSub').innerText = "🔴 Bağlantı Kesildi";
-                document.getElementById('activeChatSub').style.color = "var(--accent-red)";
+                if (typeof data === 'object') {
+                    if (data.type === 'image') appendImageMessage(data.content, 'incoming');
+                    if (data.type === 'sticker') appendMessage(data.content, 'incoming', true);
+                } else {
+                    appendMessage(data, 'incoming');
+                }
             });
         }
 
@@ -390,29 +439,98 @@
             const text = input.value.trim();
             if (!text) return;
 
-            if (!conn || !conn.open) {
-                alert('Henüz canlı bağlantı kurulmadı! Sol üstten arkadaşının ID numarasını yazıp bağlan butonuna bas.');
-                return;
-            }
+            if (!conn || !conn.open) return alert('Henüz canlı bağlantı kurulmadı!');
 
             conn.send(text);
             appendMessage(text, 'outgoing');
             input.value = '';
         };
 
-        function appendMessage(text, type) {
+        // FOTOĞRAF GÖNDERME
+        window.sendImage = (input) => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imgData = e.target.result;
+                if (conn && conn.open) {
+                    conn.send({ type: 'image', content: imgData });
+                    appendImageMessage(imgData, 'outgoing');
+                } else {
+                    alert('Önce bir kullanıcıya bağlanmalısınız!');
+                }
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // STICKER GÖNDERME
+        window.toggleStickers = () => {
+            const picker = document.getElementById('stickerPicker');
+            picker.style.display = picker.style.display === 'grid' ? 'none' : 'grid';
+        };
+
+        window.sendSticker = (sticker) => {
+            if (!conn || !conn.open) return alert('Önce bir kullanıcıya bağlanmalısınız!');
+            conn.send({ type: 'sticker', content: sticker });
+            appendMessage(sticker, 'outgoing', true);
+            document.getElementById('stickerPicker').style.display = 'none';
+        };
+
+        // SESLİ / GÖRÜNTÜLÜ ARAMA BAŞLATMA
+        window.startCall = (isVideo) => {
+            if (!conn || !conn.open) return alert('Arama yapmak için önce bir kullanıcıya bağlanmalısınız!');
+
+            navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true }).then((stream) => {
+                localStream = stream;
+                document.getElementById('localVideo').srcObject = stream;
+                document.getElementById('callModal').style.display = 'flex';
+                document.getElementById('callStatusText').innerText = 'Aranıyor...';
+
+                mediaCall = peer.call(conn.peer, stream);
+
+                mediaCall.on('stream', (remoteStream) => {
+                    document.getElementById('callStatusText').innerText = 'Görüşme Başladı';
+                    document.getElementById('remoteVideo').srcObject = remoteStream;
+                });
+            }).catch(err => {
+                alert('Kamera veya mikrofon izni verilmedi!');
+            });
+        };
+
+        window.endCall = () => {
+            if (mediaCall) mediaCall.close();
+            if (localStream) localStream.getTracks().forEach(track => track.stop());
+            document.getElementById('callModal').style.display = 'none';
+        };
+
+        function appendMessage(text, type, isSticker = false) {
             const container = document.getElementById('messagesContainer');
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             const msg = document.createElement('div');
             msg.className = `message-bubble ${type}`;
+            if (isSticker) msg.style.fontSize = '3rem';
             msg.innerHTML = `${text}<div class="message-time">${time}</div>`;
             
             container.appendChild(msg);
             container.scrollTop = container.scrollHeight;
         }
 
+        function appendImageMessage(src, type) {
+            const container = document.getElementById('messagesContainer');
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const msg = document.createElement('div');
+            msg.className = `message-bubble ${type}`;
+            msg.innerHTML = `<img src="${src}"><div class="message-time">${time}</div>`;
+            
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
         window.copyMyId = () => {
+            if (!currentUserId) return alert('Henüz ID oluşturulmadı.');
             navigator.clipboard.writeText(currentUserId);
             alert('ID Numaran kopyalandı: ' + currentUserId);
         };
