@@ -1,115 +1,142 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ücretsiz AI Video</title>
-<style>
-  :root { --bg:#fff; --fg:#1a1a1a; --card:#f3f3f5; --accent:#6c47ff; --muted:#777; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#121214; --fg:#f2f2f2; --card:#1e1e22; --muted:#999; } }
-  * { box-sizing:border-box; }
-  body { margin:0; padding:20px; background:var(--bg); color:var(--fg); font-family:system-ui,sans-serif; max-width:640px; margin-inline:auto; }
-  h1 { font-size:1.4rem; }
-  label { display:block; margin:14px 0 6px; font-size:.9rem; color:var(--muted); }
-  textarea, input { width:100%; padding:12px; border-radius:10px; border:1px solid #8884; background:var(--card); color:var(--fg); font-size:1rem; font-family:inherit; }
-  textarea { min-height:130px; }
-  button { margin-top:16px; width:100%; padding:14px; border:0; border-radius:10px; background:var(--accent); color:#fff; font-size:1rem; font-weight:600; }
-  button:disabled { opacity:.5; }
-  #status { margin-top:14px; font-size:.9rem; color:var(--muted); min-height:1.2em; }
-  canvas, video { width:100%; max-width:360px; display:block; margin:14px auto 0; border-radius:12px; background:#000; }
-  a#dl { display:none; margin-top:10px; text-align:center; color:var(--accent); }
-  small { color:var(--muted); }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MGD Cem - Galaxy Web App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Başlık Stili */
+    header {
+      margin-top: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      color: #a855f7;
+      text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7;
+    }
+
+    /* Arama / Adres Çubuğu Kutusu */
+    .address-bar-container {
+      display: flex;
+      gap: 10px;
+      width: 90%;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 25px;
+      border: 2px solid #a855f7;
+      background: rgba(15, 23, 42, 0.8);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
+    }
+
+    button {
+      padding: 12px 25px;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(45deg, #a855f7, #6366f1);
+      color: #fff;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
+    }
+
+    /* İçerik Ekranı (Iframe Penceresi) */
+    .viewer-frame {
+      width: 90%;
+      max-width: 1200px;
+      height: 70vh;
+      border-radius: 15px;
+      border: 2px solid rgba(168, 85, 247, 0.5);
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-<h1>🎬 Ücretsiz AI Video</h1>
-<small>Her satır bir sahne. AI her satırdan bir resim çizer, sonra hepsi hareketli videoya çevrilir. Hesap/token gerekmez.</small>
 
-<label for="prompts">Sahneler (satır başına bir tane, İngilizce daha iyi sonuç verir)</label>
-<textarea id="prompts">a fox in a snowy forest, cinematic
-the fox looks at the northern lights, cinematic
-the fox runs toward a glowing cabin, cinematic</textarea>
+  <header>
+    <h1>MGD Cem</h1>
+  </header>
 
-<label for="secs">Sahne süresi (saniye)</label>
-<input id="secs" type="number" value="3" min="1" max="8">
+  <div class="address-bar-container">
+    <input type="text" id="urlInput" placeholder="Siti adresi yazın (Örn: wikipedia.org veya https://...)">
+    <button onclick="loadSite()">Aç</button>
+  </div>
 
-<button id="go">Video Üret</button>
-<div id="status"></div>
-<canvas id="cv" width="576" height="1024"></canvas>
-<video id="out" controls playsinline style="display:none"></video>
-<a id="dl" download="ai-video.webm">⬇ Videoyu indir</a>
+  <div class="viewer-frame">
+    <iframe id="siteViewer" src="about:blank"></iframe>
+  </div>
 
-<script>
-const $ = id => document.getElementById(id);
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const W = 576, H = 1024;
+  <script>
+    function loadSite() {
+      let input = document.getElementById('urlInput').value.trim();
+      let iframe = document.getElementById('siteViewer');
 
-async function getImage(prompt, i) {
-  const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) +
-    `?width=${W}&height=${H}&nologo=true&seed=${Date.now() % 100000 + i}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Resim alınamadı (" + res.status + ")");
-  return await createImageBitmap(await res.blob());
-}
+      if (!input) return;
 
-function drawFrame(ctx, img, t) { // t: 0..1, yavaş zoom
-  const z = 1 + 0.15 * t;
-  const w = W * z, h = H * z;
-  ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
-}
-
-$("go").onclick = async () => {
-  const prompts = $("prompts").value.split("\n").map(s => s.trim()).filter(Boolean);
-  const secs = Math.max(1, Math.min(8, +$("secs").value || 3));
-  if (!prompts.length) return;
-
-  $("go").disabled = true;
-  $("out").style.display = "none"; $("dl").style.display = "none";
-  const imgs = [];
-
-  try {
-    for (let i = 0; i < prompts.length; i++) {
-      $("status").textContent = `Resim ${i + 1}/${prompts.length} çiziliyor...`;
-      imgs.push(await getImage(prompts[i], i));
-      if (i < prompts.length - 1) {
-        // Ücretsiz katman ~15 sn'de bir istek kabul ediyor
-        for (let s = 16; s > 0; s--) {
-          $("status").textContent = `Resim ${i + 1} tamam. Sonraki için ${s} sn bekleniyor...`;
-          await sleep(1000);
-        }
+      // HTTP/HTTPS kontrolü
+      if (!input.startsWith('http://') && !input.startsWith('https://')) {
+        input = 'https://' + input;
       }
+
+      iframe.src = input;
     }
 
-    $("status").textContent = "Video kaydediliyor...";
-    const cv = $("cv"), ctx = cv.getContext("2d");
-    const stream = cv.captureStream(30);
-    const rec = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "" });
-    const chunks = [];
-    rec.ondataavailable = e => e.data.size && chunks.push(e.data);
-    const done = new Promise(r => rec.onstop = r);
-    rec.start();
-
-    for (const img of imgs) {
-      const start = performance.now();
-      while (true) {
-        const t = (performance.now() - start) / (secs * 1000);
-        if (t >= 1) break;
-        drawFrame(ctx, img, t);
-        await new Promise(r => requestAnimationFrame(r));
+    // Enter tuşuna basınca çalıştırma
+    document.getElementById('urlInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        loadSite();
       }
-    }
-    rec.stop(); await done;
+    });
+  </script>
 
-    const url = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
-    $("out").src = url; $("out").style.display = "block";
-    $("dl").href = url; $("dl").style.display = "block";
-    $("status").textContent = "Hazır!";
-  } catch (e) {
-    $("status").textContent = "Hata: " + e.message + " (servis yoğun olabilir, tekrar dene)";
-  } finally {
-    $("go").disabled = false;
-  }
-};
-</script>
 </body>
 </html>
