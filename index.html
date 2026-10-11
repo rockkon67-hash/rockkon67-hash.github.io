@@ -31,7 +31,6 @@
             z-index: 1;
         }
 
-        /* Mobilde üst kısım alt alta düzenlendi */
         header {
             position: relative;
             z-index: 10;
@@ -201,8 +200,8 @@
     <div id="container">
         <div class="welcome-screen" id="welcomeScreen">
             <h1>MGD CEM GALAXY</h1>
-            <p>Mobil ekran için optimize edildi. Arama çubuğuna adres yazıp BAĞLAN tuşuna basarak tüneli başlatabilirsin.</p>
-            <div class="status-badge">🟢 Mobil Optimizasyon Aktif</div>
+            <p>Beyaz ekran hatalarını önlemek için proxy tünel motoru entegre edildi. Adresi yazıp BAĞLAN'a basabilirsin[span_2](start_span)[span_2](end_span).</p>
+            <div class="status-badge">🟢 Proxy Tünel Aktif</div>
         </div>
         <iframe id="proxyFrame"></iframe>
     </div>
@@ -268,9 +267,12 @@
                 }
             }
 
+            // Beyaz ekran (X-Frame-Options) engeline takılmamak için CroxyProxy altyapısı üzerinden yönlendirme[span_3](start_span)[span_3](end_span)
+            let proxiedUrl = "https://www.croxyproxy.com/_zing/index.php?q=" + encodeURIComponent(targetUrl);
+
             welcomeScreen.style.display = 'none';
             proxyFrame.style.display = 'block';
-            proxyFrame.src = targetUrl;
+            proxyFrame.src = proxiedUrl;
         });
 
         function goHome() {
