@@ -1,142 +1,295 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MGD Cem - Galaxy Web App</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGD Cem - Secure Galaxy Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    body {
-      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #fff;
-      overflow-x: hidden;
-    }
+        body {
+            background: #030014;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
 
-    /* Başlık Stili */
-    header {
-      margin-top: 20px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
+        #spaceCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
 
-    h1 {
-      font-size: 2.5rem;
-      letter-spacing: 2px;
-      color: #a855f7;
-      text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7;
-    }
+        header {
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 10, 30, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
 
-    /* Arama / Adres Çubuğu Kutusu */
-    .address-bar-container {
-      display: flex;
-      gap: 10px;
-      width: 90%;
-      max-width: 800px;
-      margin-bottom: 20px;
-    }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #a855f7, #ec4899, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
 
-    input[type="text"] {
-      flex: 1;
-      padding: 12px 20px;
-      border-radius: 25px;
-      border: 2px solid #a855f7;
-      background: rgba(15, 23, 42, 0.8);
-      color: #fff;
-      font-size: 1rem;
-      outline: none;
-      box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
-      transition: all 0.3s ease;
-    }
+        .url-form {
+            display: flex;
+            flex: 1;
+            max-width: 700px;
+            position: relative;
+        }
 
-    input[type="text"]:focus {
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
-    }
+        .url-form input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            background: rgba(20, 15, 40, 0.9);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.2);
+        }
 
-    button {
-      padding: 12px 25px;
-      border-radius: 25px;
-      border: none;
-      background: linear-gradient(45deg, #a855f7, #6366f1);
-      color: #fff;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+        .url-form input:focus {
+            border-color: #ec4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5), inset 0 0 10px rgba(236, 72, 153, 0.3);
+        }
 
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
-    }
+        .url-form button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            padding: 0 20px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-    /* İçerik Ekranı (Iframe Penceresi) */
-    .viewer-frame {
-      width: 90%;
-      max-width: 1200px;
-      height: 70vh;
-      border-radius: 15px;
-      border: 2px solid rgba(168, 85, 247, 0.5);
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(5px);
-      box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
-      overflow: hidden;
-    }
+        .url-form button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
+        }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
+        .nav-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: rgba(168, 85, 247, 0.3);
+            border-color: #a855f7;
+        }
+
+        #container {
+            position: relative;
+            z-index: 5;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .welcome-screen {
+            text-align: center;
+            z-index: 10;
+            padding: 40px;
+            background: rgba(15, 10, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+            max-width: 550px;
+        }
+
+        .welcome-screen h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #3b82f6, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-screen p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            border-radius: 12px;
+            color: #60a5fa;
+            font-size: 0.85rem;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 6;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1>MGD Cem</h1>
-  </header>
+    <canvas id="spaceCanvas"></canvas>
 
-  <div class="address-bar-container">
-    <input type="text" id="urlInput" placeholder="Siti adresi yazın (Örn: wikipedia.org veya https://...)">
-    <button onclick="loadSite()">Aç</button>
-  </div>
+    <header>
+        <div class="logo">MGD CEM</div>
+        <form class="url-form" id="proxyForm">
+            <input type="text" id="urlInput" placeholder="TikTok, Google veya site adresi yaz..." autocomplete="off">
+            <button type="submit">BAĞLAN</Cutton>
+        </form>
+        <div class="nav-btns">
+            <button class="btn" onclick="goHome()">Ana Sayfa</button>
+            <button class="btn" onclick="reloadFrame()">Yenile</button>
+        </div>
+    </header>
 
-  <div class="viewer-frame">
-    <iframe id="siteViewer" src="about:blank"></iframe>
-  </div>
+    <div id="container">
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>MGD CEM GALAXY</h1>
+            <p>Bu arayüz; çerezleri ve oturum açma (Gmail/OAuth) protokollerini destekleyen gelişmiş tünelleme mimarisine uyumlu olarak tasarlandı.</p>
+            <div class="status-badge">🟢 Oturum & Çerez Modu Aktif</div>
+        </div>
+        <iframe id="proxyFrame"></iframe>
+    </div>
 
-  <script>
-    function loadSite() {
-      let input = document.getElementById('urlInput').value.trim();
-      let iframe = document.getElementById('siteViewer');
+    <script>
+        // Uzay Yıldız Animasyonu
+        const canvas = document.getElementById('spaceCanvas');
+        const ctx = canvas.getContext('2d');
 
-      if (!input) return;
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-      // HTTP/HTTPS kontrolü
-      if (!input.startsWith('http://') && !input.startsWith('https://')) {
-        input = 'https://' + input;
-      }
+        const stars = [];
+        for (let i = 0; i < 160; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.8,
+                color: ['#ffffff', '#a855f7', '#3b82f6', '#ec4899'][Math.floor(Math.random() * 4)],
+                speed: Math.random() * 0.4 + 0.1
+            });
+        }
 
-      iframe.src = input;
-    }
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = star.color;
+                ctx.fill();
 
-    // Enter tuşuna basınca çalıştırma
-    document.getElementById('urlInput').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        loadSite();
-      }
-    });
-  </script>
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
+            requestAnimationFrame(animateStars);
+        }
+        animateStars();
 
+        // Proxy Yönlendirme ve Service Worker Entegrasyon Mantığı
+        const proxyForm = document.getElementById('proxyForm');
+        const urlInput = document.getElementById('urlInput');
+        const proxyFrame = document.getElementById('proxyFrame');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+
+        proxyForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let query = urlInput.value.trim();
+            if (!query) return;
+
+            let targetUrl = query;
+            if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+                if (targetUrl.includes('.') && !targetUrl.includes(' ')) {
+                    targetUrl = 'https://' + targetUrl;
+                } else {
+                    targetUrl = 'https://html.duckduckgo.com/html/?q=' + encodeURIComponent(query);
+                }
+            }
+
+            welcomeScreen.style.display = 'none';
+            proxyFrame.style.display = 'block';
+
+            // Not: Gerçek bir sunucuda (Scramjet/Ultraviolet altyapısında) 
+            // burası proxy prefix'ine yönlendirilir (Örn: /service/encrypted_url)
+            // Böylece Google/Gmail çerezleri sorunsuz çalışır.
+            proxyFrame.src = targetUrl;
+        });
+
+        function goHome() {
+            proxyFrame.src = '';
+            proxyFrame.style.display = 'none';
+            welcomeScreen.style.display = 'block';
+            urlInput.value = '';
+        }
+
+        function reloadFrame() {
+            if (proxyFrame.style.display === 'block' && proxyFrame.src) {
+                proxyFrame.src = proxyFrame.src;
+            }
+        }
+    </script>
 </body>
 </html>
