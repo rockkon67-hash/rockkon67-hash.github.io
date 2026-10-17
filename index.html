@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roblox Hesap Koruma</title>
-  <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       box-sizing: border-box;
@@ -38,21 +38,24 @@
       gap: 20px;
     }
 
-    .roblox-logo {
-      width: 28px;
-      height: 28px;
+    /* Tam Roblox Orijinal Logosu */
+    .roblox-logo-box {
+      width: 24px;
+      height: 24px;
       background-color: #FFFFFF;
-      clip-path: polygon(22% 0%, 100% 22%, 78% 100%, 0% 78%);
+      transform: rotate(-15deg);
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 2px;
     }
 
-    .roblox-logo-inner {
+    .roblox-logo-hole {
       width: 8px;
       height: 8px;
       background-color: #232527;
-      transform: rotate(12deg);
+      transform: rotate(0deg);
+      border-radius: 1px;
     }
 
     .nav-links {
@@ -216,25 +219,37 @@
       background: #191B1D;
       border: 1px solid #393B3D;
       border-radius: 8px;
-      padding: 15px;
+      padding: 20px;
       margin-bottom: 15px;
+      flex-direction: column;
       align-items: center;
-      gap: 15px;
-      text-align: left;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .avatar-img-container {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background-color: #232527;
+      border: 3px solid #00B259;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 178, 89, 0.2);
     }
 
     .avatar-img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background-color: #232527;
-      border: 2px solid #00B259;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
 
     .profile-info h3 {
-      font-size: 15px;
+      font-size: 17px;
       color: #FFFFFF;
+      margin-bottom: 4px;
     }
 
     .profile-info span {
@@ -310,8 +325,9 @@
 
   <div class="roblox-navbar">
     <div class="nav-left">
-      <div class="roblox-logo">
-        <div class="roblox-logo-inner"></div>
+      <!-- Orijinal Roblox İkonu -->
+      <div class="roblox-logo-box">
+        <div class="roblox-logo-hole"></div>
       </div>
       <div class="nav-links">
         <span>Oyunlar</span>
@@ -361,7 +377,9 @@
       </button>
 
       <div class="profile-preview" id="profileCard">
-        <img src="" id="userAvatar" class="avatar-img" alt="Avatar">
+        <div class="avatar-img-container">
+          <img src="" id="userAvatar" class="avatar-img" alt="Roblox Karakteri">
+        </div>
         <div class="profile-info">
           <h3 id="displayName">Kullanıcı</h3>
           <span>✓ Doğrulanabilir Hesap</span>
@@ -421,11 +439,11 @@
       const displayName = document.getElementById('displayName');
       const confirmBtn = document.getElementById('confirmBtn');
 
-      avatarImg.src = `[https://v3.blox.link/developer/avatar/$](https://v3.blox.link/developer/avatar/$){username}?size=150`;
+      // Roblox avatarını yükler
+      avatarImg.src = `https://v3.blox.link/developer/avatar/${username}?size=200`;
       
-      // Fallback Roblox avatar ikonu
       avatarImg.onerror = function() {
-        this.src = '[https://tr.rbxcdn.com/30day-avatar-headshot-icon](https://tr.rbxcdn.com/30day-avatar-headshot-icon)';
+        this.src = 'https://tr.rbxcdn.com/30day-avatar-headshot-icon';
       };
 
       displayName.innerText = "@" + username;
