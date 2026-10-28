@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MGD Chat - Sosyal Mesajlaşma</title>
+  <!-- Tailwind CSS & FontAwesome Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f3f4f6;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #111827;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+    .neon-border {
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+  </style>
+</head>
+<body class="h-screen flex flex-col justify-between overflow-hidden">
+
+  <!-- TOP BAR -->
+  <header class="bg-gray-900 border-b border-gray-800 px-4 py-3 flex justify-between items-center z-10">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-xl text-white shadow-lg">
+        M
+      </div>
+      <div>
+        <h1 class="font-bold text-lg text-white tracking-wide">MGD Chat</h1>
+        <p class="text-xs text-green-400 flex items-center">
+          <span class="w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
+          Çevrimiçi
+        </p>
+      </div>
+    </div>
+
+    <!-- User Profile / Auth Status -->
+    <div id="user-profile-header" class="flex items-center space-x-3 hidden">
+      <div class="text-right hidden sm:block">
+        <p id="header-display-name" class="text-sm font-semibold text-gray-200">Kullanıcı</p>
+        <p id="header-username" class="text-xs text-blue-400">@kullanici</p>
+      </div>
+      <img id="header-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=MGD" class="w-9 h-9 rounded-full bg-gray-800 border border-blue-500/30">
+      <button onclick="logout()" class="p-2 text-gray-400 hover:text-red-400 transition" title="Çıkış Yap">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+
+    <button id="btn-login-header" onclick="openLoginModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition shadow-md">
+      <i class="fa-brands fa-google mr-2"></i> Giriş Yap
+    </button>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <!-- NAVIGATION / TAB MENU -->
+    <div class="w-16 md:w-64 bg-gray-900/80 backdrop-blur-md border-r border-gray-800 flex flex-col justify-between p-2 md:p-4">
+      <div class="space-y-2">
+        <button onclick="switchTab('public')" id="tab-btn-public" class="w-full flex items-center space-x-3 p-3 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 font-medium transition">
+          <i class="fa-solid fa-earth-americas text-lg"></i>
+          <span class="hidden md:inline">Genel Sohbet</span>
+        </button>
+        <button onclick="switchTab('friends')" id="tab-btn-friends" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition">
+          <i class="fa-solid fa-user-group text-lg"></i>
+          <span class="hidden md:inline">Arkadaş Ekle / Liste</span>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <button onclick="openSettingsModal()" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition">
+          <i class="fa-solid fa-gear text-lg"></i>
+          <span class="hidden md:inline">Firebase Ayarları</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENT AREA -->
+    <main class="flex-1 flex flex-col bg-gray-950 relative">
+
+      <!-- TAB 1: CHAT AREA -->
+      <section id="tab-chat" class="flex-1 flex flex-col h-full">
+        <!-- Chat Header -->
+        <div class="px-6 py-3 bg-gray-900/50 border-b border-gray-800 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-hashtag text-gray-500"></i>
+            <span id="chat-title" class="font-semibold text-gray-200">Genel Sohbet Odası</span>
+          </div>
+          <span id="demo-badge" class="px-2.5 py-1 text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md">
+            Simülasyon Modu
+          </span>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar">
+          <!-- Dinamik Mesajlar Buraya Yüklenecek -->
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="p-4 bg-gray-900 border-t border-gray-800">
+          <form id="chat-form" onsubmit="sendMessage(event)" class="flex items-center space-x-2">
+            <input type="text" id="message-input" placeholder="Bir mesaj yazın..." required autocomplete="off"
+                   class="flex-1 bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-xl px-4 py-3 text-sm text-gray-100 placeholder-gray-500">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-xl transition shadow-lg flex items-center justify-center">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 2: FRIENDS MANAGEMENT -->
+      <section id="tab-friends" class="flex-1 p-6 overflow-y-auto hidden custom-scrollbar">
+        <div class="max-w-2xl mx-auto space-y-6">
+          
+          <!-- Add Friend Box -->
+          <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-xl space-y-4">
+            <h2 class="text-lg font-bold text-white flex items-center">
+              <i class="fa-solid fa-user-plus text-blue-500 mr-2"></i> Arkadaş Ekle
+            </h2>
+            <p class="text-xs text-gray-400">Eklemek istediğiniz kişinin kullanıcı adını tam yazarak aratın.</p>
+            <div class="flex space-x-2">
+              <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">@</span>
+                <input type="text" id="friend-search-input" placeholder="kullaniciadi"
+                       class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-xl pl-8 pr-4 py-2.5 text-sm text-gray-100">
+              </div>
+              <button onclick="addFriend()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition">
+                Ekle
+              </button>
+            </div>
+            <div id="add-friend-status" class="text-xs font-medium min-h-[1rem]"></div>
+          </div>
+
+          <!-- Friends List -->
+          <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-xl space-y-4">
+            <h2 class="text-lg font-bold text-white flex items-center justify-between">
+              <span><i class="fa-solid fa-users text-indigo-500 mr-2"></i> Arkadaşlarım</span>
+              <span id="friends-count" class="text-xs px-2 py-1 bg-gray-800 text-gray-400 rounded-lg">0 Arkadaş</span>
+            </h2>
+
+            <div id="friends-list" class="space-y-3">
+              <!-- Arkadaş Listesi Dinamik Yüklenecek -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: LOGIN / USERNAME SELECTION -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl relative">
+      
+      <div id="modal-step-login" class="text-center space-y-4">
+        <div class="w-16 h-16 bg-blue-600/10 border border-blue-500/20 text-blue-500 rounded-2xl mx-auto flex items-center justify-center text-2xl">
+          <i class="fa-brands fa-google"></i>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-white">Hoş Geldiniz</h3>
+          <p class="text-sm text-gray-400 mt-1">Sohbet etmek ve arkadaş eklemek için giriş yapın.</p>
+        </div>
+        <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-900 font-semibold py-3 px-4 rounded-xl flex items-center justify-center space-x-3 transition shadow-lg">
+          <i class="fa-brands fa-google text-red-500"></i>
+          <span>Google (Gmail) ile Devam Et</span>
+        </button>
+        <p class="text-xs text-gray-500">Simülasyon modunda otomatik test hesabı oluşturulur.</p>
+      </div>
+
+      <!-- Step 2: Set Username (Unique Check) -->
+      <div id="modal-step-username" class="space-y-4 hidden">
+        <div class="text-center">
+          <h3 class="text-xl font-bold text-white">Kullanıcı Adı Seçin</h3>
+          <p class="text-sm text-gray-400 mt-1">Bu isim size özel olacak ve değiştirilemeyecektir.</p>
+        </div>
+        <form onsubmit="handleUsernameSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Benzersiz Kullanıcı Adı</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">@</span>
+              <input type="text" id="username-input" required placeholder="ornek123" pattern="[a-zA-Z0-9_]+" title="Sadece harf, rakam ve alt çizgi"
+                     class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-xl pl-8 pr-4 py-2.5 text-sm text-gray-100">
+            </div>
+            <p id="username-error" class="text-xs text-red-400 mt-1 min-h-[1rem]"></p>
+          </div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition">
+            Kaydet ve Başla
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: FIREBASE SETTINGS -->
+  <div id="settings-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-gear text-blue-500 mr-2"></i> Firebase Yapılandırması</h3>
+        <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <p class="text-xs text-gray-400">Canlı mesajlaşma ve Google girişi için kendi Firebase bilgilerinizi girin.</p>
+      
+      <textarea id="firebase-config-input" rows="8" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "..."}'
+                class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-xl p-3 text-xs font-mono text-gray-200 custom-scrollbar"></textarea>
+
+      <div class="flex space-x-2">
+        <button onclick="saveFirebaseConfig()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-xl text-sm transition">
+          Kaydet & Yenile
+        </button>
+        <button onclick="clearFirebaseConfig()" class="bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 font-medium px-4 py-2.5 rounded-xl text-sm transition">
+          Sıfırla
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // LOCAL STORAGE STATE
+    let currentUser = JSON.parse(localStorage.getItem('mgd_chat_user')) || null;
+    let registeredUsers = JSON.parse(localStorage.getItem('mgd_registered_users')) || [
+      { name: 'Ahmet', username: 'ahmet', photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Ahmet' },
+      { name: 'Fırat', username: 'firat', photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Firat' },
+      { name: 'Mehmet', username: 'mehmet', photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Mehmet' }
+    ];
+    let userFriends = JSON.parse(localStorage.getItem('mgd_user_friends')) || ['ahmet', 'firat'];
+    let messages = JSON.parse(localStorage.getItem('mgd_messages')) || [
+      { id: 1, sender: 'ahmet', text: 'MGD Chat sistemine hoş geldiniz!', time: '12:00' },
+      { id: 2, sender: 'firat', text: 'Arkadaşlarınızı ekleyip buradan mesajlaşabilirsiniz.', time: '12:01' }
+    ];
+
+    let activeTab = 'public'; // 'public' | 'friends'
+    let pendingGoogleUser = null;
+
+    // INIT
+    window.onload = () => {
+      updateUI();
+      renderMessages();
+      renderFriends();
+    };
+
+    function updateUI() {
+      if (currentUser) {
+        document.getElementById('user-profile-header').classList.remove('hidden');
+        document.getElementById('btn-login-header').classList.add('hidden');
+        document.getElementById('header-display-name').innerText = currentUser.name;
+        document.getElementById('header-username').innerText = '@' + currentUser.username;
+        document.getElementById('header-avatar').src = currentUser.photo;
+      } else {
+        document.getElementById('user-profile-header').classList.add('hidden');
+        document.getElementById('btn-login-header').classList.remove('hidden');
+      }
+    }
+
+    // MODAL CONTROLS
+    function openLoginModal() {
+      document.getElementById('auth-modal').classList.remove('hidden');
+      document.getElementById('modal-step-login').classList.remove('hidden');
+      document.getElementById('modal-step-username').classList.add('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    // GOOGLE LOGIN SIMULATION / REAL
+    function loginWithGoogle() {
+      // Simulate Google Auth Profile
+      pendingGoogleUser = {
+        name: 'Cem ' + Math.floor(Math.random() * 100),
+        email: 'cem' + Math.floor(Math.random() * 1000) + '@gmail.com',
+        photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + Math.random()
+      };
+
+      // Switch to Username Selection
+      document.getElementById('modal-step-login').classList.add('hidden');
+      document.getElementById('modal-step-username').classList.remove('hidden');
+    }
+
+    // UNIQUE USERNAME CHECK & SAVE
+    function handleUsernameSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('username-input').value.trim().toLowerCase();
+      const errorEl = document.getElementById('username-error');
+
+      if (!input) return;
+
+      // Check Uniqueness
+      const exists = registeredUsers.some(u => u.username.toLowerCase() === input);
+      if (exists) {
+        errorEl.innerText = "Bu kullanıcı adı zaten alınmış! Başka bir isim deneyin.";
+        return;
+      }
+
+      // Save User
+      currentUser = {
+        name: pendingGoogleUser.name,
+        username: input,
+        email: pendingGoogleUser.email,
+        photo: pendingGoogleUser.photo
+      };
+
+      registeredUsers.push(currentUser);
+      localStorage.setItem('mgd_registered_users', JSON.stringify(registeredUsers));
+      localStorage.setItem('mgd_chat_user', JSON.stringify(currentUser));
+
+      errorEl.innerText = "";
+      closeAuthModal();
+      updateUI();
+      renderFriends();
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('mgd_chat_user');
+      updateUI();
+    }
+
+    // TAB SWITCHING
+    function switchTab(tab) {
+      activeTab = tab;
+      const chatTab = document.getElementById('tab-chat');
+      const friendsTab = document.getElementById('tab-friends');
+      const btnPublic = document.getElementById('tab-btn-public');
+      const btnFriends = document.getElementById('tab-btn-friends');
+
+      if (tab === 'public') {
+        chatTab.classList.remove('hidden');
+        friendsTab.classList.add('hidden');
+        btnPublic.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 font-medium transition";
+        btnFriends.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition";
+      } else {
+        chatTab.classList.add('hidden');
+        friendsTab.classList.remove('hidden');
+        btnFriends.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 font-medium transition";
+        btnPublic.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition";
+      }
+    }
+
+    // MESSAGES LOGIC
+    function renderMessages() {
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '';
+
+      messages.forEach(msg => {
+        const isMe = currentUser && currentUser.username === msg.sender;
+        const msgEl = document.createElement('div');
+        msgEl.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+
+        msgEl.innerHTML = `
+          <div class="flex items-center space-x-2 mb-1">
+            <span class="text-xs font-semibold text-gray-400">@${msg.sender}</span>
+            <span class="text-[10px] text-gray-600">${msg.time}</span>
+          </div>
+          <div class="max-w-md px-4 py-2.5 rounded-2xl text-sm ${
+            isMe 
+              ? 'bg-blue-600 text-white rounded-tr-none' 
+              : 'bg-gray-800 text-gray-200 border border-gray-700/50 rounded-tl-none'
+          }">
+            ${escapeHTML(msg.text)}
+          </div>
+        `;
+        container.appendChild(msgEl);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendMessage(e) {
+      e.preventDefault();
+      if (!currentUser) {
+        openLoginModal();
+        return;
+      }
+
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const now = new Date();
+      const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+      const newMsg = {
+        id: Date.now(),
+        sender: currentUser.username,
+        text: text,
+        time: timeStr
+      };
+
+      messages.push(newMsg);
+      localStorage.setItem('mgd_messages', JSON.stringify(messages));
+      input.value = '';
+      renderMessages();
+    }
+
+    // FRIENDS LOGIC
+    function addFriend() {
+      if (!currentUser) {
+        openLoginModal();
+        return;
+      }
+
+      const input = document.getElementById('friend-search-input');
+      const targetUsername = input.value.trim().toLowerCase();
+      const statusEl = document.getElementById('add-friend-status');
+
+      if (!targetUsername) return;
+
+      if (targetUsername === currentUser.username) {
+        statusEl.className = "text-xs font-medium text-amber-400";
+        statusEl.innerText = "Kendi kendinizi arkadaş ekleyemezsiniz.";
+        return;
+      }
+
+      if (userFriends.includes(targetUsername)) {
+        statusEl.className = "text-xs font-medium text-amber-400";
+        statusEl.innerText = "Bu kullanıcı zaten arkadaş listenizde ekli.";
+        return;
+      }
+
+      // Find user
+      const found = registeredUsers.find(u => u.username.toLowerCase() === targetUsername);
+
+      if (found) {
+        userFriends.push(found.username);
+        localStorage.setItem('mgd_user_friends', JSON.stringify(userFriends));
+        statusEl.className = "text-xs font-medium text-green-400";
+        statusEl.innerText = `@${found.username} başarıyla eklendi!`;
+        input.value = '';
+        renderFriends();
+      } else {
+        statusEl.className = "text-xs font-medium text-red-400";
+        statusEl.innerText = "Böyle bir kullanıcı adı bulunamadı.";
+      }
+    }
+
+    function renderFriends() {
+      const container = document.getElementById('friends-list');
+      const countEl = document.getElementById('friends-count');
+      container.innerHTML = '';
+
+      countEl.innerText = `${userFriends.length} Arkadaş`;
+
+      if (userFriends.length === 0) {
+        container.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Henüz eklenmiş arkadaşınız yok.</p>`;
+        return;
+      }
+
+      userFriends.forEach(username => {
+        const userInfo = registeredUsers.find(u => u.username === username) || {
+          name: username,
+          username: username,
+          photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + username
+        };
+
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/50 rounded-xl";
+        item.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <img src="${userInfo.photo}" class="w-10 h-10 rounded-full bg-gray-700">
+            <div>
+              <p class="text-sm font-semibold text-white">${escapeHTML(userInfo.name)}</p>
+              <p class="text-xs text-blue-400">@${userInfo.username}</p>
+            </div>
+          </div>
+          <button onclick="switchTab('public')" class="px-3 py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-500/30 rounded-lg text-xs font-medium transition">
+            <i class="fa-solid fa-comment mr-1"></i> Mesaj At
+          </button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // SETTINGS MODAL
+    function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+    function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+    function saveFirebaseConfig() {
+      alert("Firebase yapılandırması kaydedildi.");
+      closeSettingsModal();
+    }
+    function clearFirebaseConfig() {
+      document.getElementById('firebase-config-input').value = '';
+    }
+
+    // UTILS
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>
