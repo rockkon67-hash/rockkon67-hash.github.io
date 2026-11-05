@@ -1,298 +1,296 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="h-full bg-black">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sigma Boy Ali & Cem 👨‍❤️‍💋‍👨 Ali</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KRITISCHE SYSTEMWARNUNG</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;900&display=swap');
-        
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #09090b;
-            color: #ffffff;
-            overflow: hidden;
-            margin: 0;
+            font-family: 'Share Tech Mono', 'Fira Code', monospace;
             user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            touch-action: manipulation;
         }
 
-        /* Floating Background Text Styling & Animation */
-        .floating-text {
-            position: absolute;
-            white-space: nowrap;
-            font-weight: 900;
-            color: rgba(245, 158, 11, 0.4);
-            text-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+        /* CRT Scanline & Glitch overlay */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.5) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.06),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.06)
+            );
+            background-size: 100% 4px, 6px 100%;
             pointer-events: none;
-            will-change: transform, opacity;
-            animation: floatMove linear infinite;
         }
 
-        @keyframes floatMove {
-            0% {
-                transform: translate(0, 0) rotate(0deg) scale(0.9);
-                opacity: 0.2;
-            }
-            50% {
-                opacity: 0.8;
-                transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(1.1);
-            }
-            100% {
-                transform: translate(calc(var(--dx) * 2), calc(var(--dy) * 2)) rotate(calc(var(--rot) * 2)) scale(0.9);
-                opacity: 0.2;
-            }
+        @keyframes pulse-alarm {
+            0%, 100% { box-shadow: inset 0 0 120px rgba(220, 38, 38, 0.8); }
+            50% { box-shadow: inset 0 0 30px rgba(153, 27, 27, 0.4); }
+        }
+        .alarm-bg {
+            animation: pulse-alarm 1s infinite alternate;
         }
 
-        /* Glow effects */
-        .glow-gold {
-            text-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3);
+        @keyframes glitch-flicker {
+            0% { opacity: 0.98; }
+            50% { opacity: 1; }
+            52% { opacity: 0.85; }
+            54% { opacity: 1; }
+            80% { opacity: 0.95; }
+            100% { opacity: 0.99; }
         }
-        
-        .glow-heart {
-            text-shadow: 0 0 20px rgba(236, 72, 153, 0.7), 0 0 40px rgba(236, 72, 153, 0.4);
-        }
-
-        /* Custom Scrollbar for Phase 2 */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(24, 24, 27, 0.8);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #ec4899;
-            border-radius: 4px;
-        }
-
-        /* Pop in animation for 100 items */
-        .pop-card {
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            opacity: 0;
-            transform: scale(0.5);
-        }
-
-        @keyframes popIn {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .flicker {
+            animation: glitch-flicker 0.15s infinite;
         }
     </style>
 </head>
-<body class="h-screen w-screen relative flex items-center justify-center overflow-hidden">
+<body class="h-full w-full bg-black text-red-500 relative overflow-hidden select-none alarm-bg">
 
-    <!-- Background Container for Floating 'sigma boy ali 🤴' -->
-    <div id="floatingBackground" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
+    <!-- Secret Emergency Tap Area (Top Right Corner - Tap 5 times to exit) -->
+    <div id="secretCorner" class="absolute top-0 right-0 w-24 h-24 z-50 opacity-0 cursor-pointer"></div>
 
-    <!-- Background Subtle Radial Gradient -->
-    <div class="absolute inset-0 bg-radial from-amber-500/10 via-transparent to-black z-0 pointer-events-none"></div>
+    <!-- CRT Overlay -->
+    <div class="scanlines absolute inset-0 z-10"></div>
 
-    <!-- PHASE 1: Countdown & Main Title -->
-    <div id="phase1" class="relative z-10 flex flex-col items-center justify-center p-4 text-center">
-        <!-- Main Card -->
-        <div class="backdrop-blur-xl bg-zinc-900/80 border border-amber-500/40 rounded-3xl p-6 sm:p-10 shadow-[0_0_50px_rgba(245,158,11,0.2)] max-w-lg w-full mx-4 transform transition-all duration-300">
+    <!-- Access Denied Modal -->
+    <div id="accessDeniedModal" class="hidden absolute inset-0 z-50 bg-red-950/95 flex flex-col items-center justify-center p-6 text-center">
+        <div class="bg-black border-4 border-red-600 p-6 rounded-xl max-w-lg shadow-[0_0_100px_rgba(255,0,0,1)]">
+            <h2 class="text-3xl font-black text-red-600 mb-2">HARDWARE GESPERRT!</h2>
+            <p class="text-xs text-red-300 font-mono mb-4"> ENTSCHLÜSSELUNGSSCHLÜSSEL WIRD AUSGETAUSCHT. SYSTEMABSTURZ BLOCKIERT.</p>
+            <div class="text-[10px] text-zinc-500 font-mono">[ FEHLER: 0x80070005_ZUGRIFF_VERWEIGERT ]</div>
+        </div>
+    </div>
+
+    <!-- MAIN RANSOMWARE INTERFACE -->
+    <div class="relative z-20 h-full flex flex-col justify-between p-3 md:p-6 text-red-500 max-w-6xl mx-auto flicker">
+        
+        <!-- Header -->
+        <header class="bg-red-950/80 border-2 border-red-600 rounded-lg p-3 flex flex-col md:flex-row items-center justify-between gap-2 shadow-[0_0_30px_rgba(255,0,0,0.5)]">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl md:text-4xl">🔒</span>
+                <div>
+                    <h1 class="text-lg md:text-2xl font-black text-red-500 uppercase tracking-wider">IHRE DATEIEN WURDEN VERSCHLÜSSELT!</h1>
+                    <p class="text-[10px] md:text-xs text-red-400">KRITISCHES SYSTEM GESPERRT – ALLE DATEN SIND GESCHÜTZT</p>
+                </div>
+            </div>
+            <div class="bg-black border border-red-600 px-3 py-1 rounded text-center">
+                <div class="text-[9px] text-red-400">ZAHLUNGS-ID</div>
+                <div class="text-xs font-bold text-red-500 tracking-widest">WNN-9842-8801-X</div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="grid grid-cols-1 md:grid-cols-3 gap-3 my-2 flex-1">
             
-            <div class="text-6xl sm:text-7xl mb-4 animate-bounce">🤴</div>
-            
-            <h1 class="text-3xl sm:text-5xl font-black text-amber-400 mb-2 tracking-wider glow-gold">
-                SIGMA BOY ALİ
-            </h1>
-            
-            <p class="text-amber-200/80 font-bold mb-6 text-sm sm:text-base uppercase tracking-widest">
-                Der Countdown läuft...
-            </p>
+            <!-- Left: Countdown Timer & Status -->
+            <div class="bg-black/90 border-2 border-red-700 rounded-lg p-4 flex flex-col justify-between text-center shadow-[0_0_20px_rgba(255,0,0,0.3)]">
+                <div>
+                    <div class="text-xs text-red-400 font-bold uppercase mb-1">VERBLEIBENDE ZEIT BIS ZUR LÖSCHUNG:</div>
+                    <div id="ransomTimer" class="text-3xl md:text-4xl font-black text-red-500 tracking-widest my-2 bg-red-950/50 border border-red-800 py-2 rounded">
+                        47:59:59.<span class="text-xs" id="msTimer">99</span>
+                    </div>
+                    <p class="text-[10px] text-red-400 mt-2">Wenn die Zeit abläuft, wird der Schlüssel gelöscht und Ihre Daten gehen für immer verloren.</p>
+                </div>
 
-            <!-- Countdown Timer Circle -->
-            <div class="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto flex items-center justify-center">
-                <svg class="w-full h-full transform -rotate-90">
-                    <circle cx="50%" cy="50%" r="42%" stroke="currentColor" stroke-width="8" class="text-zinc-800" fill="transparent" />
-                    <circle id="timerProgress" cx="50%" cy="50%" r="42%" stroke="currentColor" stroke-width="8" class="text-amber-500 transition-all duration-1000 ease-linear" fill="transparent" stroke-dasharray="264" stroke-dashoffset="0" stroke-linecap="round" />
-                </svg>
-                <div class="absolute flex flex-col items-center">
-                    <span id="countdownText" class="text-5xl sm:text-6xl font-black text-white glow-gold">10</span>
-                    <span class="text-[10px] text-amber-400/80 font-semibold tracking-wider uppercase">Sekunden</span>
+                <!-- ASCII Skull Graphic -->
+                <pre class="text-[8px] md:text-[10px] leading-[1.1] text-red-600 font-black my-2 select-none">
+    ░░░░░████████████░░░░░
+    ░░░████████████████░░░
+    ░░██████████████████░░
+    ░░████  ██░░░░██  ██░░
+    ░░████████░░░░██████░░
+    ░░░░██████████████░░░░
+    ░░░░░██░██░██░██░░░░░░
+                </pre>
+
+                <div class="bg-red-950/60 border border-red-800 p-2 rounded text-[10px] text-red-300">
+                    STATUS: <span class="text-red-500 font-bold animate-pulse">VERSCHLÜSSELUNG LÄUFT</span>
                 </div>
             </div>
 
-            <p class="mt-6 text-xs text-amber-400/90 font-mono tracking-widest uppercase animate-pulse">
-                ⚡ Noch <span id="secondText" class="font-bold">10 Sekunden</span> verbleibend ⚡
-            </p>
-        </div>
-    </div>
+            <!-- Right: Simulated File Locking Terminal -->
+            <div class="md:col-span-2 bg-black/90 border-2 border-red-700 rounded-lg p-4 flex flex-col justify-between shadow-[0_0_20px_rgba(255,0,0,0.3)]">
+                <div class="flex items-center justify-between border-b border-red-900 pb-2 mb-2">
+                    <span class="text-xs font-bold text-red-400">VERSCHLÜSSELDES ENGINE PROTOKOLL</span>
+                    <span class="text-[10px] bg-red-900 text-red-200 px-1.5 py-0.5 rounded">AES-256 + RSA-4096</span>
+                </div>
 
-    <!-- PHASE 2: 100x Cem👨‍❤️‍💋‍👨Ali Display -->
-    <div id="phase2" class="absolute inset-0 z-20 hidden bg-zinc-950 flex flex-col items-center justify-between p-4 sm:p-6">
-        
-        <!-- Header -->
-        <div class="z-30 text-center pt-2 pb-4 w-full border-b border-pink-500/30 bg-zinc-950/90 backdrop-blur">
-            <h2 class="text-2xl sm:text-4xl font-black tracking-wider text-pink-500 glow-heart mb-1">
-                👨‍❤️‍💋‍👨 GROSSE LIEBE! 👨‍❤️‍💋‍👨
-            </h2>
-            <p class="text-xs sm:text-sm text-pink-300 font-semibold">
-                100x cem👨‍❤️‍💋‍👨ali ist da!
-            </p>
-        </div>
+                <!-- Live Log Container -->
+                <div id="fileLog" class="h-48 md:h-64 overflow-y-auto text-[10px] md:text-xs text-red-500 space-y-1 font-mono pr-1">
+                    <div>[INIT] Payload WANNA_LOCK_v4.2 wird ausgeführt...</div>
+                </div>
 
-        <!-- 100 Items Grid -->
-        <div class="custom-scrollbar w-full max-w-6xl h-full overflow-y-auto my-4 p-2 sm:p-4">
-            <div id="cemAliContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-center">
-                <!-- Javascript injects 100 animated cards here -->
+                <!-- Progress Bar -->
+                <div class="mt-3">
+                    <div class="flex justify-between text-[11px] font-bold text-red-400 mb-1">
+                        <span>Verschlüsselungsfortschritt</span>
+                        <span id="lockPercent">0%</span>
+                    </div>
+                    <div class="w-full h-3 bg-zinc-950 border border-red-800 rounded-full overflow-hidden">
+                        <div id="lockProgress" class="h-full bg-red-600 transition-all duration-150 w-0"></div>
+                    </div>
+                </div>
             </div>
-        </div>
+
+        </main>
 
         <!-- Footer -->
-        <div class="z-30 pb-2 pt-3 text-center w-full border-t border-pink-500/30 bg-zinc-950/90 backdrop-blur flex flex-col sm:flex-row items-center justify-center gap-4">
-            <span class="text-pink-400 font-bold text-sm">🎉 Insgesamt 100 Mal geladen! 🎉</span>
-            <button onclick="restartExperience()" class="px-6 py-2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-black rounded-full shadow-lg shadow-pink-500/40 transition transform hover:scale-105 active:scale-95 text-xs sm:text-sm tracking-wider uppercase">
-                Erneut starten 🔄
-            </button>
-        </div>
+        <footer class="bg-black/80 border border-red-900 p-2 rounded text-center text-[10px] text-red-600/80">
+            WARNUNG: GERÄT NICHT NEU STARTEN ODER AUSSCHALTEN. DATENVERLUST DROHT.
+        </footer>
     </div>
 
     <script>
-        // Web Audio API Beep Generator
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playBeep(freq = 440, duration = 0.08) {
-            try {
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
+        class SoundFX {
+            constructor() { this.ctx = null; }
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
                 }
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (e) {}
-        }
-
-        // Generate Continuously Floating 'sigma boy ali 🤴' background elements
-        const bgContainer = document.getElementById('floatingBackground');
-        const totalFloatingTexts = 35; // Total floating items across screen
-
-        function generateFloatingBackground() {
-            bgContainer.innerHTML = '';
-            const phrases = [
-                "sigma boy ali 🤴", 
-                "SIGMA BOY ALİ 🤴", 
-                "sigma boy ali 🤴", 
-                "🤴 SIGMA BOY ALİ 🤴"
-            ];
-
-            for (let i = 0; i < totalFloatingTexts; i++) {
-                const el = document.createElement('div');
-                el.className = 'floating-text';
-                
-                // Pick random text phrase
-                el.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-                
-                // Random position across the entire viewport
-                const startX = Math.random() * 100; // %
-                const startY = Math.random() * 100; // %
-                el.style.left = `${startX}vw`;
-                el.style.top = `${startY}vh`;
-
-                // Random font size
-                const size = Math.floor(Math.random() * 18) + 16; // 16px to 34px
-                el.style.fontSize = `${size}px`;
-
-                // Set CSS variables for movement direction & distance
-                const dx = (Math.random() - 0.5) * 300; // movement delta X
-                const dy = (Math.random() - 0.5) * 300; // movement delta Y
-                const rot = (Math.random() - 0.5) * 90;  // rotation in deg
-
-                el.style.setProperty('--dx', `${dx}px`);
-                el.style.setProperty('--dy', `${dy}px`);
-                el.style.setProperty('--rot', `${rot}deg`);
-
-                // Random animation duration & delay for seamless continuous floating
-                const duration = Math.random() * 8 + 6; // 6s - 14s
-                const delay = Math.random() * -10; // negative delay so they start immediately mid-animation
-                el.style.animationDuration = `${duration}s`;
-                el.style.animationDelay = `${delay}s`;
-
-                bgContainer.appendChild(el);
+            }
+            playBeep(freq = 800, duration = 0.04) {
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e){}
+            }
+            playSiren() {
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1400, this.ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.15);
+                } catch(e){}
             }
         }
+        const sound = new SoundFX();
 
-        // Countdown Logic
-        let timeLeft = 10;
-        let countdownInterval = null;
-        const countdownText = document.getElementById('countdownText');
-        const secondText = document.getElementById('secondText');
-        const timerProgress = document.getElementById('timerProgress');
-        const fullDash = 264; // Circumference of circle
+        const samplePaths = [
+            "/storage/emulated/0/DCIM/Camera/IMG_20241001_102030.jpg",
+            "/storage/emulated/0/WhatsApp/Media/WhatsApp Images/",
+            "/storage/emulated/0/Download/Private_Document.pdf",
+            "/system/priv-app/Settings/Settings.apk",
+            "/data/user/0/com.whatsapp/databases/msgstore.db",
+            "/storage/emulated/0/Pictures/Screenshots/",
+            "/data/data/com.android.providers.contacts/databases/contacts2.db",
+            "/storage/emulated/0/Documents/Bank_Tokens.kdbx"
+        ];
 
-        function startCountdown() {
-            timeLeft = 10;
-            countdownText.innerText = timeLeft;
-            secondText.innerText = `${timeLeft} Sekunden`;
-            timerProgress.style.strokeDashoffset = '0';
+        let lockPercentVal = 0;
+        const fileLog = document.getElementById('fileLog');
+        const lockProgress = document.getElementById('lockProgress');
+        const lockPercent = document.getElementById('lockPercent');
 
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                timeLeft--;
-                playBeep(400 + (10 - timeLeft) * 40, 0.08);
-
-                if (timeLeft >= 0) {
-                    countdownText.innerText = timeLeft;
-                    secondText.innerText = `${timeLeft} Sekunden`;
-                    const offset = fullDash - (timeLeft / 10) * fullDash;
-                    timerProgress.style.strokeDashoffset = offset;
-                }
-
-                if (timeLeft <= 0) {
-                    clearInterval(countdownInterval);
-                    switchToPhase2();
-                }
-            }, 1000);
+        function appendLog(path) {
+            const item = document.createElement('div');
+            item.className = "text-red-500 font-mono";
+            item.innerText = `[GESPERRT] ${path} -> AES-256`;
+            fileLog.appendChild(item);
+            fileLog.scrollTop = fileLog.scrollHeight;
         }
 
-        // Phase 2: Render 100x cem👨‍❤️‍💋‍👨ali
-        function switchToPhase2() {
-            // Sound cue for phase change
-            playBeep(880, 0.3);
-
-            document.getElementById('phase1').classList.add('hidden');
-            const phase2 = document.getElementById('phase2');
-            phase2.classList.remove('hidden');
-
-            const container = document.getElementById('cemAliContainer');
-            container.innerHTML = '';
-
-            // Generate 100 cards with staggered animations
-            for (let i = 1; i <= 100; i++) {
-                const card = document.createElement('div');
-                card.className = 'pop-card bg-gradient-to-br from-pink-950/60 to-rose-900/40 border border-pink-500/40 rounded-2xl p-3 sm:p-4 flex items-center justify-between shadow-lg shadow-pink-950/50 hover:border-pink-400 hover:scale-105 transition-all';
-                card.style.animationDelay = `${(i * 0.015).toFixed(2)}s`;
-
-                card.innerHTML = `
-                    <span class="text-xs font-mono font-bold text-pink-400 bg-pink-950/80 px-2 py-1 rounded-md border border-pink-500/30">#${i}</span>
-                    <span class="text-sm sm:text-base font-black text-white tracking-wide drop-shadow">cem👨‍❤️‍💋‍👨ali</span>
-                    <span class="text-xs opacity-75">💖</span>
-                `;
-                container.appendChild(card);
+        let totalSeconds = 48 * 3600;
+        let ms = 99;
+        
+        setInterval(() => {
+            ms--;
+            if (ms < 0) {
+                ms = 99;
+                totalSeconds--;
             }
+            const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            const secs = String(totalSeconds % 60).padStart(2, '0');
+            
+            document.getElementById('ransomTimer').innerText = `${hours}:${mins}:${secs}.${String(ms).padStart(2, '0')}`;
+        }, 10);
+
+        function startRansomwareSimulation() {
+            sound.init();
+            
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+
+            setInterval(() => {
+                if (lockPercentVal < 99) {
+                    lockPercentVal += Math.floor(Math.random() * 3) + 1;
+                    if (lockPercentVal > 99) lockPercentVal = 99;
+
+                    lockProgress.style.width = lockPercentVal + '%';
+                    lockPercent.innerText = lockPercentVal + '%';
+
+                    sound.playBeep(400 + lockPercentVal * 10, 0.03);
+
+                    const randomPath = samplePaths[Math.floor(Math.random() * samplePaths.length)];
+                    appendLog(randomPath);
+
+                    if (lockPercentVal % 15 === 0) sound.playSiren();
+                }
+            }, 200);
         }
 
-        function restartExperience() {
-            document.getElementById('phase2').classList.add('hidden');
-            document.getElementById('phase1').classList.remove('hidden');
-            generateFloatingBackground();
-            startCountdown();
-        }
+        window.addEventListener('click', startRansomwareSimulation, { once: true });
+        window.addEventListener('touchstart', startRansomwareSimulation, { once: true });
 
-        // Initialize on page load
-        window.onload = function() {
-            generateFloatingBackground();
-            startCountdown();
-        };
+        const accessDeniedModal = document.getElementById('accessDeniedModal');
+        let escPressCount = 0;
+        let escResetTimeout = null;
+
+        window.addEventListener('keydown', (e) => {
+            sound.playSiren();
+            accessDeniedModal.classList.remove('hidden');
+            setTimeout(() => accessDeniedModal.classList.add('hidden'), 1000);
+
+            if (e.key === 'Escape') {
+                escPressCount++;
+                clearTimeout(escResetTimeout);
+                escResetTimeout = setTimeout(() => { escPressCount = 0; }, 1000);
+                if (escPressCount >= 3) {
+                    location.reload();
+                }
+            }
+        });
+
+        let secretTapCount = 0;
+        let tapResetTimeout = null;
+        document.getElementById('secretCorner').addEventListener('click', (e) => {
+            e.stopPropagation();
+            secretTapCount++;
+            clearTimeout(tapResetTimeout);
+            tapResetTimeout = setTimeout(() => { secretTapCount = 0; }, 1200);
+
+            if (secretTapCount >= 5) {
+                location.reload();
+            }
+        });
     </script>
 </body>
 </html>
-```
