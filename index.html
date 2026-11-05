@@ -1,449 +1,299 @@
+```html
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MGD Chat - Roblox Style</title>
-  <!-- Tailwind CSS & FontAwesome Icons -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      background-color: #0f111a;
-      color: #f3f4f6;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #111827;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #374151;
-      border-radius: 4px;
-    }
-    .roblox-btn {
-      background: linear-gradient(135deg, #00b06f 0%, #008452 100%);
-      transition: all 0.2s ease;
-    }
-    .roblox-btn:hover {
-      background: linear-gradient(135deg, #00c77d 0%, #00995e 100%);
-      box-shadow: 0 4px 15px rgba(0, 176, 111, 0.4);
-    }
-  </style>
-</head>
-<body class="h-screen flex flex-col justify-between overflow-hidden">
-
-  <!-- TOP BAR -->
-  <header class="bg-gray-900 border-b border-gray-800 px-4 py-3 flex justify-between items-center z-10">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-600 flex items-center justify-center font-bold text-xl text-white shadow-lg">
-        M
-      </div>
-      <div>
-        <h1 class="font-bold text-lg text-white tracking-wide">MGD Chat</h1>
-        <p class="text-xs text-green-400 flex items-center">
-          <span class="w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
-          Çevrimiçi
-        </p>
-      </div>
-    </div>
-
-    <!-- User Profile / Auth Status -->
-    <div id="user-profile-header" class="flex items-center space-x-3 hidden">
-      <div class="text-right hidden sm:block">
-        <p id="header-display-name" class="text-sm font-semibold text-gray-200">Kullanıcı</p>
-        <p id="header-username" class="text-xs text-emerald-400">@kullanici</p>
-      </div>
-      <img id="header-avatar" src="" class="w-9 h-9 rounded-full bg-gray-800 border border-emerald-500/30">
-      <button onclick="logout()" class="p-2 text-gray-400 hover:text-red-400 transition" title="Çıkış Yap">
-        <i class="fa-solid fa-right-from-bracket"></i>
-      </button>
-    </div>
-
-    <button id="btn-login-header" onclick="openLoginModal()" class="px-5 py-2 roblox-btn text-white text-sm font-bold rounded-xl transition shadow-md">
-      <i class="fa-solid fa-user-shield mr-2"></i> Roblox Tarzı Giriş
-    </button>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <div class="flex-1 flex overflow-hidden relative">
-
-    <!-- NAVIGATION / TAB MENU -->
-    <div class="w-16 md:w-64 bg-gray-900/80 backdrop-blur-md border-r border-gray-800 flex flex-col justify-between p-2 md:p-4">
-      <div class="space-y-2">
-        <button onclick="switchTab('public')" id="tab-btn-public" class="w-full flex items-center space-x-3 p-3 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium transition">
-          <i class="fa-solid fa-earth-americas text-lg"></i>
-          <span class="hidden md:inline">Genel Sohbet</span>
-        </button>
-        <button onclick="switchTab('friends')" id="tab-btn-friends" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition">
-          <i class="fa-solid fa-user-group text-lg"></i>
-          <span class="hidden md:inline">Arkadaş Ekle / Liste</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- CONTENT AREA -->
-    <main class="flex-1 flex flex-col bg-gray-950 relative">
-
-      <!-- TAB 1: CHAT AREA -->
-      <section id="tab-chat" class="flex-1 flex flex-col h-full">
-        <!-- Chat Header -->
-        <div class="px-6 py-3 bg-gray-900/50 border-b border-gray-800 flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <i class="fa-solid fa-hashtag text-gray-500"></i>
-            <span id="chat-title" class="font-semibold text-gray-200">Genel Sohbet Odası</span>
-          </div>
-          <span class="px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md">
-            Güvenli Bağlantı Aktif
-          </span>
-        </div>
-
-        <!-- Messages Container -->
-        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar"></div>
-
-        <!-- Chat Input Bar -->
-        <div class="p-4 bg-gray-900 border-t border-gray-800">
-          <form id="chat-form" onsubmit="sendMessage(event)" class="flex items-center space-x-2">
-            <input type="text" id="message-input" placeholder="Bir mesaj yazın..." required autocomplete="off"
-                   class="flex-1 bg-gray-800 border border-gray-700 focus:border-emerald-500 focus:outline-none rounded-xl px-4 py-3 text-sm text-gray-100 placeholder-gray-500">
-            <button type="submit" class="roblox-btn text-white px-5 py-3 rounded-xl transition shadow-lg flex items-center justify-center font-bold">
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
-          </form>
-        </div>
-      </section>
-
-      <!-- TAB 2: FRIENDS MANAGEMENT -->
-      <section id="tab-friends" class="flex-1 p-6 overflow-y-auto hidden custom-scrollbar">
-        <div class="max-w-2xl mx-auto space-y-6">
-          
-          <!-- Add Friend Box -->
-          <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-xl space-y-4">
-            <h2 class="text-lg font-bold text-white flex items-center">
-              <i class="fa-solid fa-user-plus text-emerald-500 mr-2"></i> Arkadaş Ekle
-            </h2>
-            <p class="text-xs text-gray-400">Eklemek istediğiniz kişinin kullanıcı adını tam yazarak aratın.</p>
-            <div class="flex space-x-2">
-              <div class="relative flex-1">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">@</span>
-                <input type="text" id="friend-search-input" placeholder="kullaniciadi"
-                       class="w-full bg-gray-800 border border-gray-700 focus:border-emerald-500 focus:outline-none rounded-xl pl-8 pr-4 py-2.5 text-sm text-gray-100">
-              </div>
-              <button onclick="addFriend()" class="roblox-btn text-white px-5 py-2.5 rounded-xl font-bold text-sm transition">
-                Ekle
-              </button>
-            </div>
-            <div id="add-friend-status" class="text-xs font-medium min-h-[1rem]"></div>
-          </div>
-
-          <!-- Friends List -->
-          <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-xl space-y-4">
-            <h2 class="text-lg font-bold text-white flex items-center justify-between">
-              <span><i class="fa-solid fa-users text-emerald-500 mr-2"></i> Arkadaşlarım</span>
-              <span id="friends-count" class="text-xs px-2 py-1 bg-gray-800 text-gray-400 rounded-lg">0 Arkadaş</span>
-            </h2>
-
-            <div id="friends-list" class="space-y-3"></div>
-          </div>
-
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- MODAL: ROBLOX STYLE AUTHENTICATION -->
-  <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl relative">
-      
-      <div class="text-center space-y-2">
-        <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-inner">
-          <i class="fa-solid fa-shield-halved"></i>
-        </div>
-        <h3 class="text-2xl font-black text-white tracking-wide">MGD Güvenli Hesap</h3>
-        <p class="text-xs text-gray-400">Roblox tarzı kullanıcı adı ve şifre koruması.</p>
-      </div>
-
-      <form onsubmit="handleRobloxAuth(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Kullanıcı Adı (Benzersiz)</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 font-bold">@</span>
-            <input type="text" id="roblox-username" required placeholder="ornek_oyuncu" pattern="[a-zA-Z0-9_]+"
-                   class="w-full bg-gray-800 border border-gray-700 focus:border-emerald-500 focus:outline-none rounded-xl pl-8 pr-4 py-3 text-sm text-white font-medium">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-300 mb-1 uppercase tracking-wider">Güvenlik Şifresi</label>
-          <input type="password" id="roblox-password" required placeholder="••••••••"
-                 class="w-full bg-gray-800 border border-gray-700 focus:border-emerald-500 focus:outline-none rounded-xl px-4 py-3 text-sm text-white font-medium">
-        </div>
-
-        <p id="auth-error" class="text-xs text-red-400 text-center min-h-[1rem] font-medium"></p>
-
-        <button type="submit" class="w-full roblox-btn text-white font-bold py-3.5 rounded-xl text-sm transition shadow-lg">
-          Giriş Yap / Kayıt Ol
-        </button>
-      </form>
-
-      <div class="text-center pt-2 border-t border-gray-800">
-        <p class="text-[11px] text-gray-500">Aynı kullanıcı adını iki kişi kullanamaz. Şifreniz cihazınızda güvenle saklanır.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT LOGIC -->
-  <script>
-    // LOCAL STORAGE STATE
-    let currentUser = JSON.parse(localStorage.getItem('mgd_chat_user')) || null;
-    let registeredUsers = JSON.parse(localStorage.getItem('mgd_registered_users')) || [
-      { username: 'ahmet', password: '123', photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Ahmet' },
-      { username: 'firat', password: '123', photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Firat' },
-      { username: 'mehmet', password: '123', photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Mehmet' }
-    ];
-    let userFriends = JSON.parse(localStorage.getItem('mgd_user_friends')) || ['ahmet', 'firat'];
-    let messages = JSON.parse(localStorage.getItem('mgd_messages')) || [
-      { id: 1, sender: 'ahmet', text: 'MGD Chat Roblox güvenlik sistemine hoş geldiniz!', time: '12:00' },
-      { id: 2, sender: 'firat', text: 'Artık isimler tam eşleşiyor ve başkası kullanamıyor.', time: '12:01' }
-    ];
-
-    let activeTab = 'public';
-
-    window.onload = () => {
-      updateUI();
-      renderMessages();
-      renderFriends();
-    };
-
-    function updateUI() {
-      if (currentUser) {
-        document.getElementById('user-profile-header').classList.remove('hidden');
-        document.getElementById('btn-login-header').classList.add('hidden');
-        document.getElementById('header-display-name.innerText = currentUser.username;
-        document.getElementById('header-username').innerText = '@' + currentUser.username;
-        document.getElementById('header-avatar').src = currentUser.photo;
-      } else {
-        document.getElementById('user-profile-header').classList.add('hidden');
-        document.getElementById('btn-login-header').classList.remove('hidden');
-      }
-    }
-
-    function openLoginModal() {
-      document.getElementById('auth-modal').classList.remove('hidden');
-    }
-
-    function closeAuthModal() {
-      document.getElementById('auth-modal').classList.add('hidden');
-    }
-
-    // ROBLOX STYLE AUTH (UNIQUE USERNAME + PASSWORD CHECK)
-    function handleRobloxAuth(e) {
-      e.preventDefault();
-      const usernameInput = document.getElementById('roblox-username').value.trim().toLowerCase();
-      const passwordInput = document.getElementById('roblox-password').value.trim();
-      const errorEl = document.getElementById('auth-error');
-
-      if (!usernameInput || !passwordInput) return;
-
-      // Check if user already exists
-      let existingUser = registeredUsers.find(u => u.username.toLowerCase() === usernameInput);
-
-      if (existingUser) {
-        // User exists -> Check password
-        if (existingUser.password === passwordInput) {
-          currentUser = existingUser;
-          errorEl.innerText = "";
-        } else {
-          errorEl.innerText = "Hatalı şifre! Bu kullanıcı adı başka bir hesaba ait.";
-          return;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigma Boy Ali & Cem 👨‍❤️‍💋‍👨 Ali</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #09090b;
+            color: #ffffff;
+            overflow: hidden;
+            margin: 0;
+            user-select: none;
         }
-      } else {
-        // New user -> Create unique account
-        currentUser = {
-          username: usernameInput,
-          password: passwordInput,
-          photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + usernameInput
-        };
-        registeredUsers.push(currentUser);
-        localStorage.setItem('mgd_registered_users', JSON.stringify(registeredUsers));
-        errorEl.innerText = "";
-      }
 
-      localStorage.setItem('mgd_chat_user', JSON.stringify(currentUser));
-      closeAuthModal();
-      updateUI();
-      renderFriends();
-    }
+        /* Floating Background Text Styling & Animation */
+        .floating-text {
+            position: absolute;
+            white-space: nowrap;
+            font-weight: 900;
+            color: rgba(245, 158, 11, 0.4);
+            text-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+            pointer-events: none;
+            will-change: transform, opacity;
+            animation: floatMove linear infinite;
+        }
 
-    function logout() {
-      currentUser = null;
-      localStorage.removeItem('mgd_chat_user');
-      updateUI();
-    }
+        @keyframes floatMove {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(0.9);
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(1.1);
+            }
+            100% {
+                transform: translate(calc(var(--dx) * 2), calc(var(--dy) * 2)) rotate(calc(var(--rot) * 2)) scale(0.9);
+                opacity: 0.2;
+            }
+        }
 
-    // TAB SWITCHING
-    function switchTab(tab) {
-      activeTab = tab;
-      const chatTab = document.getElementById('tab-chat');
-      const friendsTab = document.getElementById('tab-friends');
-      const btnPublic = document.getElementById('tab-btn-public');
-      const btnFriends = document.getElementById('tab-btn-friends');
+        /* Glow effects */
+        .glow-gold {
+            text-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3);
+        }
+        
+        .glow-heart {
+            text-shadow: 0 0 20px rgba(236, 72, 153, 0.7), 0 0 40px rgba(236, 72, 153, 0.4);
+        }
 
-      if (tab === 'public') {
-        chatTab.classList.remove('hidden');
-        friendsTab.classList.add('hidden');
-        btnPublic.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium transition";
-        btnFriends.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition";
-      } else {
-        chatTab.classList.add('hidden');
-        friendsTab.classList.remove('hidden');
-        btnFriends.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium transition";
-        btnPublic.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition";
-      }
-    }
+        /* Custom Scrollbar for Phase 2 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(24, 24, 27, 0.8);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #ec4899;
+            border-radius: 4px;
+        }
 
-    // MESSAGES LOGIC
-    function renderMessages() {
-      const container = document.getElementById('chat-messages');
-      container.innerHTML = '';
+        /* Pop in animation for 100 items */
+        .pop-card {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.5);
+        }
 
-      messages.forEach(msg => {
-        const isMe = currentUser && currentUser.username === msg.sender;
-        const msgEl = document.createElement('div');
-        msgEl.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen relative flex items-center justify-center overflow-hidden">
 
-        msgEl.innerHTML = `
-          <div class="flex items-center space-x-2 mb-1">
-            <span class="text-xs font-semibold text-gray-400">@${msg.sender}</span>
-            <span class="text-[10px] text-gray-600">${msg.time}</span>
-          </div>
-          <div class="max-w-md px-4 py-2.5 rounded-2xl text-sm ${
-            isMe 
-              ? 'bg-emerald-600 text-white rounded-tr-none font-medium' 
-              : 'bg-gray-800 text-gray-200 border border-gray-700/50 rounded-tl-none'
-          }">
-            ${escapeHTML(msg.text)}
-          </div>
-        `;
-        container.appendChild(msgEl);
-      });
+    <!-- Background Container for Floating 'sigma boy ali 🤴' -->
+    <div id="floatingBackground" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
 
-      container.scrollTop = container.scrollHeight;
-    }
+    <!-- Background Subtle Radial Gradient -->
+    <div class="absolute inset-0 bg-radial from-amber-500/10 via-transparent to-black z-0 pointer-events-none"></div>
 
-    function sendMessage(e) {
-      e.preventDefault();
-      if (!currentUser) {
-        openLoginModal();
-        return;
-      }
+    <!-- PHASE 1: Countdown & Main Title -->
+    <div id="phase1" class="relative z-10 flex flex-col items-center justify-center p-4 text-center">
+        <!-- Main Card -->
+        <div class="backdrop-blur-xl bg-zinc-900/80 border border-amber-500/40 rounded-3xl p-6 sm:p-10 shadow-[0_0_50px_rgba(245,158,11,0.2)] max-w-lg w-full mx-4 transform transition-all duration-300">
+            
+            <div class="text-6xl sm:text-7xl mb-4 animate-bounce">🤴</div>
+            
+            <h1 class="text-3xl sm:text-5xl font-black text-amber-400 mb-2 tracking-wider glow-gold">
+                SIGMA BOY ALİ
+            </h1>
+            
+            <p class="text-amber-200/80 font-bold mb-6 text-sm sm:text-base uppercase tracking-widest">
+                Der Countdown läuft...
+            </p>
 
-      const input = document.getElementById('message-input');
-      const text = input.value.trim();
-      if (!text) return;
-
-      const now = new Date();
-      const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-
-      const newMsg = {
-        id: Date.now(),
-        sender: currentUser.username,
-        text: text,
-        time: timeStr
-      };
-
-      messages.push(newMsg);
-      localStorage.setItem('mgd_messages', JSON.stringify(messages));
-      input.value = '';
-      renderMessages();
-    }
-
-    // FRIENDS LOGIC (FIXED SEARCH)
-    function addFriend() {
-      if (!currentUser) {
-        openLoginModal();
-        return;
-      }
-
-      const input = document.getElementById('friend-search-input');
-      const targetUsername = input.value.trim().toLowerCase();
-      const statusEl = document.getElementById('add-friend-status');
-
-      if (!targetUsername) return;
-
-      if (targetUsername === currentUser.username) {
-        statusEl.className = "text-xs font-medium text-amber-400";
-        statusEl.innerText = "Kendi kendinizi arkadaş ekleyemezsiniz.";
-        return;
-      }
-
-      if (userFriends.includes(targetUsername)) {
-        statusEl.className = "text-xs font-medium text-amber-400";
-        statusEl.innerText = "Bu kullanıcı zaten arkadaş listenizde ekli.";
-        return;
-      }
-
-      // Find user accurately
-      const found = registeredUsers.find(u => u.username.toLowerCase() === targetUsername);
-
-      if (found) {
-        userFriends.push(found.username);
-        localStorage.setItem('mgd_user_friends', JSON.stringify(userFriends));
-        statusEl.className = "text-xs font-medium text-emerald-400";
-        statusEl.innerText = `@${found.username} başarıyla eklendi!`;
-        input.value = '';
-        renderFriends();
-      } else {
-        statusEl.className = "text-xs font-medium text-red-400";
-        statusEl.innerText = `"${targetUsername}" adında kayıtlı bir kullanıcı bulunamadı!`;
-      }
-    }
-
-    function renderFriends() {
-      const container = document.getElementById('friends-list');
-      const countEl = document.getElementById('friends-count');
-      container.innerHTML = '';
-
-      countEl.innerText = `${userFriends.length} Arkadaş`;
-
-      if (userFriends.length === 0) {
-        container.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Henüz eklenmiş arkadaşınız yok.</p>`;
-        return;
-      }
-
-      userFriends.forEach(username => {
-        const userInfo = registeredUsers.find(u => u.username === username) || {
-          username: username,
-          photo: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + username
-        };
-
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/50 rounded-xl";
-        item.innerHTML = `
-          <div class="flex items-center space-x-3">
-            <img src="${userInfo.photo}" class="w-10 h-10 rounded-full bg-gray-700">
-            <div>
-              <p class="text-sm font-semibold text-white">@${userInfo.username}</p>
-              <p class="text-xs text-emerald-400">Çevrimiçi</p>
+            <!-- Countdown Timer Circle -->
+            <div class="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto flex items-center justify-center">
+                <svg class="w-full h-full transform -rotate-90">
+                    <circle cx="50%" cy="50%" r="42%" stroke="currentColor" stroke-width="8" class="text-zinc-800" fill="transparent" />
+                    <circle id="timerProgress" cx="50%" cy="50%" r="42%" stroke="currentColor" stroke-width="8" class="text-amber-500 transition-all duration-1000 ease-linear" fill="transparent" stroke-dasharray="264" stroke-dashoffset="0" stroke-linecap="round" />
+                </svg>
+                <div class="absolute flex flex-col items-center">
+                    <span id="countdownText" class="text-5xl sm:text-6xl font-black text-white glow-gold">10</span>
+                    <span class="text-[10px] text-amber-400/80 font-semibold tracking-wider uppercase">Sekunden</span>
+                </div>
             </div>
-          </div>
-          <button onclick="switchTab('public')" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white border border-emerald-500/30 rounded-lg text-xs font-medium transition">
-            <i class="fa-solid fa-comment mr-1"></i> Mesaj At
-          </button>
-        `;
-        container.appendChild(item);
-      });
-    }
 
-    // UTILS
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-      );
-    }
-  </script>
+            <p class="mt-6 text-xs text-amber-400/90 font-mono tracking-widest uppercase animate-pulse">
+                ⚡ Noch <span id="secondText" class="font-bold">10 Sekunden</span> verbleibend ⚡
+            </p>
+        </div>
+    </div>
+
+    <!-- PHASE 2: 100x Cem👨‍❤️‍💋‍👨Ali Display -->
+    <div id="phase2" class="absolute inset-0 z-20 hidden bg-zinc-950 flex flex-col items-center justify-between p-4 sm:p-6">
+        
+        <!-- Header -->
+        <div class="z-30 text-center pt-2 pb-4 w-full border-b border-pink-500/30 bg-zinc-950/90 backdrop-blur">
+            <h2 class="text-2xl sm:text-4xl font-black tracking-wider text-pink-500 glow-heart mb-1">
+                👨‍❤️‍💋‍👨 GROSSE LIEBE! 👨‍❤️‍💋‍👨
+            </h2>
+            <p class="text-xs sm:text-sm text-pink-300 font-semibold">
+                100x cem👨‍❤️‍💋‍👨ali ist da!
+            </p>
+        </div>
+
+        <!-- 100 Items Grid -->
+        <div class="custom-scrollbar w-full max-w-6xl h-full overflow-y-auto my-4 p-2 sm:p-4">
+            <div id="cemAliContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-center">
+                <!-- Javascript injects 100 animated cards here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="z-30 pb-2 pt-3 text-center w-full border-t border-pink-500/30 bg-zinc-950/90 backdrop-blur flex flex-col sm:flex-row items-center justify-center gap-4">
+            <span class="text-pink-400 font-bold text-sm">🎉 Insgesamt 100 Mal geladen! 🎉</span>
+            <button onclick="restartExperience()" class="px-6 py-2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-black rounded-full shadow-lg shadow-pink-500/40 transition transform hover:scale-105 active:scale-95 text-xs sm:text-sm tracking-wider uppercase">
+                Erneut starten 🔄
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Web Audio API Beep Generator
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(freq = 440, duration = 0.08) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        // Generate Continuously Floating 'sigma boy ali 🤴' background elements
+        const bgContainer = document.getElementById('floatingBackground');
+        const totalFloatingTexts = 35; // Total floating items across screen
+
+        function generateFloatingBackground() {
+            bgContainer.innerHTML = '';
+            const phrases = [
+                "sigma boy ali 🤴", 
+                "SIGMA BOY ALİ 🤴", 
+                "sigma boy ali 🤴", 
+                "🤴 SIGMA BOY ALİ 🤴"
+            ];
+
+            for (let i = 0; i < totalFloatingTexts; i++) {
+                const el = document.createElement('div');
+                el.className = 'floating-text';
+                
+                // Pick random text phrase
+                el.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+                
+                // Random position across the entire viewport
+                const startX = Math.random() * 100; // %
+                const startY = Math.random() * 100; // %
+                el.style.left = `${startX}vw`;
+                el.style.top = `${startY}vh`;
+
+                // Random font size
+                const size = Math.floor(Math.random() * 18) + 16; // 16px to 34px
+                el.style.fontSize = `${size}px`;
+
+                // Set CSS variables for movement direction & distance
+                const dx = (Math.random() - 0.5) * 300; // movement delta X
+                const dy = (Math.random() - 0.5) * 300; // movement delta Y
+                const rot = (Math.random() - 0.5) * 90;  // rotation in deg
+
+                el.style.setProperty('--dx', `${dx}px`);
+                el.style.setProperty('--dy', `${dy}px`);
+                el.style.setProperty('--rot', `${rot}deg`);
+
+                // Random animation duration & delay for seamless continuous floating
+                const duration = Math.random() * 8 + 6; // 6s - 14s
+                const delay = Math.random() * -10; // negative delay so they start immediately mid-animation
+                el.style.animationDuration = `${duration}s`;
+                el.style.animationDelay = `${delay}s`;
+
+                bgContainer.appendChild(el);
+            }
+        }
+
+        // Countdown Logic
+        let timeLeft = 10;
+        let countdownInterval = null;
+        const countdownText = document.getElementById('countdownText');
+        const secondText = document.getElementById('secondText');
+        const timerProgress = document.getElementById('timerProgress');
+        const fullDash = 264; // Circumference of circle
+
+        function startCountdown() {
+            timeLeft = 10;
+            countdownText.innerText = timeLeft;
+            secondText.innerText = `${timeLeft} Sekunden`;
+            timerProgress.style.strokeDashoffset = '0';
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                playBeep(400 + (10 - timeLeft) * 40, 0.08);
+
+                if (timeLeft >= 0) {
+                    countdownText.innerText = timeLeft;
+                    secondText.innerText = `${timeLeft} Sekunden`;
+                    const offset = fullDash - (timeLeft / 10) * fullDash;
+                    timerProgress.style.strokeDashoffset = offset;
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    switchToPhase2();
+                }
+            }, 1000);
+        }
+
+        // Phase 2: Render 100x cem👨‍❤️‍💋‍👨ali
+        function switchToPhase2() {
+            // Sound cue for phase change
+            playBeep(880, 0.3);
+
+            document.getElementById('phase1').classList.add('hidden');
+            const phase2 = document.getElementById('phase2');
+            phase2.classList.remove('hidden');
+
+            const container = document.getElementById('cemAliContainer');
+            container.innerHTML = '';
+
+            // Generate 100 cards with staggered animations
+            for (let i = 1; i <= 100; i++) {
+                const card = document.createElement('div');
+                card.className = 'pop-card bg-gradient-to-br from-pink-950/60 to-rose-900/40 border border-pink-500/40 rounded-2xl p-3 sm:p-4 flex items-center justify-between shadow-lg shadow-pink-950/50 hover:border-pink-400 hover:scale-105 transition-all';
+                card.style.animationDelay = `${(i * 0.015).toFixed(2)}s`;
+
+                card.innerHTML = `
+                    <span class="text-xs font-mono font-bold text-pink-400 bg-pink-950/80 px-2 py-1 rounded-md border border-pink-500/30">#${i}</span>
+                    <span class="text-sm sm:text-base font-black text-white tracking-wide drop-shadow">cem👨‍❤️‍💋‍👨ali</span>
+                    <span class="text-xs opacity-75">💖</span>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function restartExperience() {
+            document.getElementById('phase2').classList.add('hidden');
+            document.getElementById('phase1').classList.remove('hidden');
+            generateFloatingBackground();
+            startCountdown();
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            generateFloatingBackground();
+            startCountdown();
+        };
+    </script>
 </body>
 </html>
+```
