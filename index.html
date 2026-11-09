@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr" class="dark">
 <head>
@@ -73,17 +72,17 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-bold bg-gradient-to-r from-neon-blue via-indigo-300 to-neon-purple bg-clip-text text-transparent">
-                        Lua Auto Loadstring Studio
+                        Lua Auto Loadstring & Raw Generator
                     </h1>
-                    <p class="text-xs text-gray-400">Gizli Source & Süreli Key Koruma Oluşturucu</p>
+                    <p class="text-xs text-gray-400">Anında Raw Link & Loadstring(game:HttpGet()) Oluşturucu</p>
                 </div>
             </div>
 
             <!-- Stats / Badges -->
             <div class="flex items-center space-x-3">
-                <span class="text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    GitHub-Free Auto System
+                <span class="text-xs px-3 py-1.5 rounded-full bg-neon-blue/10 text-neon-blue border border-neon-blue/20 font-medium flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></span>
+                    Raw Link Auto Generator
                 </span>
             </div>
         </div>
@@ -107,18 +106,35 @@
                 </div>
 
                 <div class="relative">
-                    <textarea id="rawScriptInput" rows="9" placeholder="-- Buraya Lua / Luau kodunu yapıştırın...&#10;print('Script başarıyla yüklendi!')&#10;game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50"
-                        class="w-full bg-darkbg border border-gray-800 focus:border-neon-blue focus:ring-1 focus:ring-neon-blue rounded-xl p-4 text-sm text-gray-200 placeholder-gray-600 transition font-mono resize-y min-h-[220px] outline-none"></textarea>
+                    <textarea id="rawScriptInput" rows="8" placeholder="-- Buraya Lua / Luau kodunu yapıştırın...&#10;print('Hello World!')&#10;game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50"
+                        class="w-full bg-darkbg border border-gray-800 focus:border-neon-blue focus:ring-1 focus:ring-neon-blue rounded-xl p-4 text-sm text-gray-200 placeholder-gray-600 transition font-mono resize-y min-h-[200px] outline-none"></textarea>
                 </div>
             </div>
 
-            <!-- Security & Protection Panel -->
+            <!-- Raw Hosting & Configuration Panel -->
             <div class="bg-darkcard border border-gray-800 rounded-2xl p-5 shadow-2xl space-y-5">
                 <h2 class="text-sm font-semibold uppercase tracking-wider text-neon-purple flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved"></i> Güvenlik & Süre Ayarları
+                    <i class="fa-solid fa-link"></i> Raw Link & Yükleme Ayarları
                 </h2>
 
-                <!-- Feature 1: Obfuscation / Source Hiding -->
+                <!-- Option: Mode Selection -->
+                <div class="p-4 rounded-xl bg-darkbg/80 border border-gray-800 space-y-3">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Raw Servis Modu</label>
+                    <select id="rawServiceType" onchange="autoGenerate()" class="w-full bg-darkcard border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:border-neon-blue outline-none">
+                        <option value="dataUri" selected>Anında Data Raw Link (Sunucusuz & Bağımsız)</option>
+                        <option value="pastebinRaw">Pastebin Raw Link Formatı</option>
+                        <option value="githubRaw">GitHub Raw Link Formatı</option>
+                    </select>
+                </div>
+
+                <!-- Custom Raw URL Input (Optional) -->
+                <div id="customUrlInputArea" class="p-4 rounded-xl bg-darkbg/80 border border-gray-800 space-y-2 hidden">
+                    <label class="block text-xs font-medium text-gray-300">Özel Raw URL (İsteğe Bağlı)</label>
+                    <input type="text" id="customRawUrl" placeholder="https://raw.githubusercontent.com/kullanici/repo/main/script.lua" oninput="autoGenerate()"
+                        class="w-full bg-darkcard border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:border-neon-blue outline-none font-mono">
+                </div>
+
+                <!-- Security Toggles -->
                 <div class="p-4 rounded-xl bg-darkbg/80 border border-gray-800 space-y-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2.5">
@@ -126,8 +142,8 @@
                                 <i class="fa-solid fa-user-ninja"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm font-medium text-gray-200">Source Kodunu Gizle (Obfuscate)</h3>
-                                <p class="text-xs text-gray-400">Kodunuzu başkalarının okunmasını engellemek için şifreler.</p>
+                                <h3 class="text-sm font-medium text-gray-200">Source Kapat / Obfuscate Et</h3>
+                                <p class="text-xs text-gray-400">Raw link içindeki kodu okunamaz yapar.</p>
                             </div>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -137,16 +153,16 @@
                     </div>
                 </div>
 
-                <!-- Feature 2: Time-Lock / Expiration -->
+                <!-- Feature: Time-Lock -->
                 <div class="p-4 rounded-xl bg-darkbg/80 border border-gray-800 space-y-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2.5">
                             <div class="p-2 bg-neon-pink/10 text-neon-pink rounded-lg border border-neon-pink/20">
-                                <i class="fa-solid fa-hourglass-half"></i>
+                                <i class="fa-solid fa-clock"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm font-medium text-gray-200">Süreli Kullanım Sistemi (Time Limit)</h3>
-                                <p class="text-xs text-gray-400">Script belirlenen süre geçince otomatik kapanır.</p>
+                                <h3 class="text-sm font-medium text-gray-200">Süreli Kullanım Ekle</h3>
+                                <p class="text-xs text-gray-400">Scriptin çalışacağı zamanı kısıtlar.</p>
                             </div>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -155,56 +171,37 @@
                         </label>
                     </div>
 
-                    <!-- Expiration Time Selection -->
                     <div id="timeLockSelectArea" class="hidden pt-3 border-t border-gray-800/80 grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-medium text-gray-400 mb-1">Kullanım Süresi Seçin</label>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Kullanım Süresi</label>
                             <select id="expirationDuration" onchange="autoGenerate()" class="w-full bg-darkcard border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:border-neon-pink outline-none">
                                 <option value="1h">1 Saat</option>
                                 <option value="12h">12 Saat</option>
                                 <option value="24h" selected>24 Saat (1 Gün)</option>
                                 <option value="7d">7 Gün</option>
-                                <option value="30d">30 Gün</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-400 mb-1">Süre Dolunca Verilecek Mesaj</label>
-                            <input type="text" id="expireMessage" value="[HATA]: Bu scriptin kullanim suresi dolmustur!" oninput="autoGenerate()"
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Uyarı Mesajı</label>
+                            <input type="text" id="expireMessage" value="[HATA]: Bu scriptin suresi doldu!" oninput="autoGenerate()"
                                 class="w-full bg-darkcard border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:border-neon-pink outline-none">
                         </div>
                     </div>
                 </div>
-
-                <!-- Extra Options -->
-                <div class="grid grid-cols-2 gap-3 pt-2">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 mb-1">Script Başlığı</label>
-                        <input type="text" id="scriptTitle" value="ProtectedHub.lua" oninput="autoGenerate()"
-                            class="w-full bg-darkbg border border-gray-800 rounded-lg px-3 py-2 text-xs text-gray-200 focus:border-neon-blue outline-none font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 mb-1">Yükleme Formatı</label>
-                        <select id="loadFormat" onchange="autoGenerate()" class="w-full bg-darkbg border border-gray-800 rounded-lg px-3 py-2 text-xs text-gray-200 focus:border-neon-blue outline-none">
-                            <option value="rawLoadstring">Saf Loadstring Formatı</option>
-                            <option value="httpGet">game:HttpGet Formatı</option>
-                            <option value="pcall">Pcall Güvenlik Formatı</option>
-                        </select>
-                    </div>
-                </div>
             </div>
 
-            <!-- Action Button -->
+            <!-- Generate Button -->
             <button onclick="autoGenerate()" class="w-full bg-gradient-to-r from-neon-purple via-indigo-600 to-neon-blue hover:opacity-90 text-white font-semibold py-4 px-6 rounded-2xl shadow-xl glow-purple transition transform active:scale-[0.99] flex items-center justify-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
-                <span>Loadstring & Korumayı Otomatik Oluştur</span>
+                <i class="fa-solid fa-bolt text-lg"></i>
+                <span>Raw Script & Loadstring Oluştur</span>
             </button>
 
         </section>
 
-        <!-- Right Column: Generated Output & Execution Code (6 Cols) -->
+        <!-- Right Column: Generated Raw Output & Loadstring Code (6 Cols) -->
         <section class="lg:col-span-6 flex flex-col space-y-4">
             
-            <!-- Output Editor Container -->
+            <!-- Output Container -->
             <div class="bg-darkcard border border-gray-800 rounded-2xl shadow-2xl flex flex-col h-full overflow-hidden min-h-[520px]">
                 
                 <!-- Output Top Bar -->
@@ -213,7 +210,7 @@
                         <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
                         <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
                         <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
-                        <span class="text-xs font-mono text-gray-400 ml-2" id="outputFileName">output_loadstring.lua</span>
+                        <span class="text-xs font-mono text-gray-400 ml-2">loadstring_output.lua</span>
                     </div>
 
                     <div class="flex items-center space-x-2">
@@ -226,66 +223,64 @@
 
                 <!-- Code Display Area -->
                 <div class="relative flex-1 bg-darkbg p-5 font-mono text-xs overflow-x-auto text-gray-200">
-                    <pre id="outputCodeDisplay" class="whitespace-pre-wrap break-all leading-relaxed"><code class="text-gray-500">-- Soldaki kutuya Lua kodunu yapıştırın, korumalarınızı seçin ve butona basın...</code></pre>
+                    <pre id="outputCodeDisplay" class="whitespace-pre-wrap break-all leading-relaxed"><code class="text-gray-500">-- Scriptinizi sol tarafa yapıştırın, Raw ve Loadstring kodunuz anında hazırlansın!</code></pre>
                 </div>
 
                 <!-- Status & Info Footer -->
                 <div class="bg-darkbg/80 px-5 py-3 border-t border-gray-800 text-xs text-gray-400 flex justify-between items-center font-mono">
                     <span id="outputStats">Boyut: 0 Bayt</span>
-                    <span id="activeProtections" class="text-neon-green flex items-center gap-1">
-                        <i class="fa-solid fa-lock text-[10px]"></i> Hazır
+                    <span id="activeProtections" class="text-neon-blue flex items-center gap-1">
+                        <i class="fa-solid fa-link text-[10px]"></i> Raw Hazır
                     </span>
                 </div>
             </div>
 
-            <!-- Quick Instructions -->
-            <div class="bg-darkcard/70 border border-gray-800/80 rounded-2xl p-4 text-xs text-gray-400 space-y-2">
-                <div class="font-semibold text-gray-200 flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-info text-neon-blue"></i> Nasıl Çalışır?
-                </div>
-                <ul class="list-disc list-inside space-y-1 text-gray-400">
-                    <li><strong class="text-gray-300">GitHub Gerektirmez:</strong> Oluşturulan kod doğrudan kopyalanıp Roblox Injector/Executor içinde çalıştırılabilir.</li>
-                    <li><strong class="text-gray-300">Source Kapatma:</strong> Orijinal kodunuz bayt algoritmasıyla gizlendiği için kimse kodunuzu çalamaz.</li>
-                    <li><strong class="text-gray-300">Süreli Kullanım:</strong> Seçilen zaman dolduğunda sunucu saatine (`os.time()`) göre kod kendini kilitler.</li>
-                </ul>
+            <!-- Generated Raw URL Box -->
+            <div class="bg-darkcard border border-gray-800 rounded-2xl p-4 space-y-2">
+                <label class="block text-xs font-semibold text-neon-blue uppercase tracking-wider flex items-center justify-between">
+                    <span><i class="fa-solid fa-globe"></i> Oluşturulan Raw Link</span>
+                    <button onclick="copyRawUrlOnly()" class="text-gray-400 hover:text-white transition text-[11px] font-normal underline">
+                        Sadece Linki Kopyala
+                    </button>
+                </label>
+                <input type="text" id="generatedRawUrlDisplay" readonly value="Script bekleniyor..."
+                    class="w-full bg-darkbg border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-300 font-mono outline-none">
             </div>
 
         </section>
     </main>
 
-    <!-- Floating Toast Notification -->
+    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-6 right-6 bg-gradient-to-r from-neon-purple to-indigo-600 text-white px-5 py-3 rounded-xl shadow-2xl transition transform translate-y-24 opacity-0 flex items-center space-x-2 z-50 border border-white/10">
         <i class="fa-solid fa-circle-check text-neon-green"></i>
         <span id="toastMsg" class="text-sm font-medium">Kopyalandı!</span>
     </div>
 
-    <!-- Application Script -->
+    <!-- Application Logic Script -->
     <script>
-        // DOM Elements
         const rawScriptInput = document.getElementById('rawScriptInput');
         const optObfuscate = document.getElementById('optObfuscate');
         const optTimeLock = document.getElementById('optTimeLock');
         const expirationDuration = document.getElementById('expirationDuration');
         const expireMessage = document.getElementById('expireMessage');
-        const scriptTitle = document.getElementById('scriptTitle');
-        const loadFormat = document.getElementById('loadFormat');
+        const rawServiceType = document.getElementById('rawServiceType');
+        const customUrlInputArea = document.getElementById('customUrlInputArea');
+        const customRawUrl = document.getElementById('customRawUrl');
         const outputCodeDisplay = document.getElementById('outputCodeDisplay');
         const outputStats = document.getElementById('outputStats');
         const activeProtections = document.getElementById('activeProtections');
         const inputLineCount = document.getElementById('inputLineCount');
+        const generatedRawUrlDisplay = document.getElementById('generatedRawUrlDisplay');
         const timeLockSelectArea = document.getElementById('timeLockSelectArea');
         const toast = document.getElementById('toast');
         const toastMsg = document.getElementById('toastMsg');
-        const outputFileName = document.getElementById('outputFileName');
 
-        // Line Counter Listener
         rawScriptInput.addEventListener('input', () => {
             const lines = rawScriptInput.value.split('\n').length;
-            inputLineCount.innerText = `${lines} ${lines === 1 ? 'satır' : 'satır'}`;
+            inputLineCount.innerText = `${lines} satır`;
             autoGenerate();
         });
 
-        // Toggle Time Lock Options UI
         function toggleTimeLockUI() {
             if (optTimeLock.checked) {
                 timeLockSelectArea.classList.remove('hidden');
@@ -295,115 +290,105 @@
             autoGenerate();
         }
 
-        // Calculate Future Expiration Timestamp (Seconds)
         function getExpirationTimestamp(durationStr) {
             const now = Math.floor(Date.now() / 1000);
-            let addedSeconds = 86400; // Default 24h
-
+            let addedSeconds = 86400;
             switch (durationStr) {
                 case '1h': addedSeconds = 3600; break;
                 case '12h': addedSeconds = 43200; break;
                 case '24h': addedSeconds = 86400; break;
                 case '7d': addedSeconds = 604800; break;
-                case '30d': addedSeconds = 2592000; break;
             }
             return now + addedSeconds;
         }
 
-        // Encodes Lua script to Byte array string
         function obfuscateLuaSource(sourceCode) {
             const bytes = [];
             for (let i = 0; i < sourceCode.length; i++) {
                 bytes.push(sourceCode.charCodeAt(i));
             }
             const byteString = bytes.join(',');
-            return `local _encoded = {${byteString}}\nlocal _src = ""\nfor i = 1, #_encoded do _src = _src .. string.char(_encoded[i]) end\nloadstring(_src)()`;
+            return `local _e = {${byteString}}; local _s = ""; for i = 1, #_e do _s = _s .. string.char(_e[i]) end; loadstring(_s)()`;
         }
 
-        // Main Generator Function
         function autoGenerate() {
             let rawCode = rawScriptInput.value;
-            const title = scriptTitle.value.trim() || 'Script.lua';
-            outputFileName.innerText = title;
+            const mode = rawServiceType.value;
+
+            if (mode === 'githubRaw' || mode === 'pastebinRaw') {
+                customUrlInputArea.classList.remove('hidden');
+            } else {
+                customUrlInputArea.classList.add('hidden');
+            }
 
             if (!rawCode.trim()) {
-                outputCodeDisplay.innerHTML = `<span class="text-gray-500">-- Soldaki kutuya Lua kodunu yapıştırın, korumalarınızı seçin ve butona basın...</span>`;
+                outputCodeDisplay.innerHTML = `<span class="text-gray-500">-- Scriptinizi sol tarafa yapıştırın, Raw ve Loadstring kodunuz anında hazırlansın!</span>`;
                 outputStats.innerText = `Boyut: 0 Bayt`;
-                activeProtections.innerHTML = `<i class="fa-solid fa-clock text-[10px]"></i> Bekliyor`;
+                generatedRawUrlDisplay.value = "Script bekleniyor...";
                 return;
             }
 
             let processedCode = rawCode;
-            let activeProtectionBadges = [];
-
-            // 1. Time-Lock Protection Injection
             if (optTimeLock.checked) {
                 const expireTime = getExpirationTimestamp(expirationDuration.value);
-                const msg = expireMessage.value.replace(/"/g, '\\"') || 'Bu scriptin süresi dolmuştur!';
-                
-                const timeLockHeader = `-- [[ SÜRELİ KEY KORUMASI ]]\nif os.time() > ${expireTime} then\n    warn("${msg}")\n    return\nend\n\n`;
-                processedCode = timeLockHeader + processedCode;
-                activeProtectionBadges.push("Süreli Kilit (" + expirationDuration.value + ")");
+                const msg = expireMessage.value.replace(/"/g, '\\"') || 'Bu scriptin suresi doldu!';
+                processedCode = `if os.time() > ${expireTime} then warn("${msg}") return end\n` + processedCode;
             }
 
-            // 2. Source Code Obfuscation / Hiding
             if (optObfuscate.checked) {
                 processedCode = obfuscateLuaSource(processedCode);
-                activeProtectionBadges.push("Source Gizlendi");
             }
 
-            // 3. Output Formatting (Loadstring Wrapper)
-            let finalOutput = "";
-            const format = loadFormat.value;
-
-            if (format === 'rawLoadstring') {
-                finalOutput = `-- [[ Auto Generated Loadstring - ${title} ]]\n` +
-                              `loadstring(${JSON.stringify(processedCode)})()`;
-            } else if (format === 'pcall') {
-                finalOutput = `-- [[ Auto Generated Loadstring (Pcall Shield) - ${title} ]]\n` +
-                              `local success, err = pcall(function()\n` +
-                              `    loadstring(${JSON.stringify(processedCode)})()\n` +
-                              `end)\nif not success then warn("[Script Error]: " .. tostring(err)) end`;
+            let rawUrl = "";
+            if (mode === 'githubRaw') {
+                rawUrl = customRawUrl.value.trim() || 'https://raw.githubusercontent.com/username/repository/main/script.lua';
+            } else if (mode === 'pastebinRaw') {
+                rawUrl = customRawUrl.value.trim() || 'https://pastebin.com/raw/XYZ12345';
             } else {
-                // Standalone executable string format
-                finalOutput = `-- [[ Auto Generated Execution Script - ${title} ]]\n` + processedCode;
+                // Data URI Raw Payload Format
+                const encodedPayload = encodeURIComponent(processedCode);
+                rawUrl = `data:text/plain;charset=utf-8,${encodedPayload}`;
             }
 
-            outputCodeDisplay.innerText = finalOutput;
-            outputStats.innerText = `Boyut: ${new Blob([finalOutput]).size} Bayt`;
+            generatedRawUrlDisplay.value = rawUrl;
 
-            if (activeProtectionBadges.length > 0) {
-                activeProtections.innerHTML = `<i class="fa-solid fa-shield text-neon-green text-[10px]"></i> Koruma: ${activeProtectionBadges.join(" + ")}`;
-            } else {
-                activeProtections.innerHTML = `<span class="text-yellow-400"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Koruma Yok</span>`;
-            }
+            // Generate Loadstring Format
+            const finalLoadstring = `loadstring(game:HttpGet("${rawUrl}"))()`;
+            outputCodeDisplay.innerText = finalLoadstring;
+            outputStats.innerText = `Boyut: ${new Blob([finalLoadstring]).size} Bayt`;
+            activeProtections.innerHTML = `<i class="fa-solid fa-check text-neon-green text-[10px]"></i> Raw Loadstring Hazır`;
         }
 
-        // Copy Handler
         function copyGeneratedCode() {
             const codeText = outputCodeDisplay.innerText;
-            if (!codeText || codeText.startsWith('-- Soldaki')) {
-                showToast("Kopyalamak için önce bir script yapıştırın!");
+            if (!codeText || codeText.startsWith('-- Scriptinizi')) {
+                showToast("Kopyalamak için önce bir script yazın!");
                 return;
             }
 
+            copyToClipboard(codeText);
+            showToast("loadstring(game:HttpGet(...))() kopyalandı!");
+        }
+
+        function copyRawUrlOnly() {
+            const urlText = generatedRawUrlDisplay.value;
+            if (!urlText || urlText === "Script bekleniyor...") {
+                showToast("Önce bir script yapıştırın!");
+                return;
+            }
+            copyToClipboard(urlText);
+            showToast("Raw URL kopyalandı!");
+        }
+
+        function copyToClipboard(text) {
             const el = document.createElement('textarea');
-            el.value = codeText;
+            el.value = text;
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-
-            showToast("Loadstring başarıyla kopyalandı!");
-            
-            const copyBtnText = document.getElementById('copyBtnText');
-            copyBtnText.innerText = 'Kopyalandı!';
-            setTimeout(() => {
-                copyBtnText.innerText = 'Loadstring Kopyala';
-            }, 2000);
         }
 
-        // Toast Notification Helper
         function showToast(msg) {
             toastMsg.innerText = msg;
             toast.classList.remove('translate-y-24', 'opacity-0');
@@ -413,5 +398,4 @@
         }
     </script>
 </body>
-</html>
-```
+    </html>
