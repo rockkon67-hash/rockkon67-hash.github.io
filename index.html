@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sürpriz!</title>
+    <title>Sürpriz</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,9 +11,9 @@
             padding: 0;
         }
         body {
-            background-color: #0b0b0b;
+            background-color: #050505;
             color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -21,34 +21,27 @@
             overflow: hidden;
         }
 
-        /* Start Ekranı */
+        /* Başlangıç Ekranı */
         #start-screen {
             text-align: center;
             z-index: 10;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #ff3333;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
-
         #start-btn {
-            background: linear-gradient(135deg, #ff0055, #ff3300);
+            background: #ff0033;
             border: none;
             color: white;
-            padding: 15px 40px;
-            font-size: 1.5rem;
+            padding: 20px 50px;
+            font-size: 2rem;
             font-weight: bold;
-            border-radius: 50px;
+            border-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
-            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
         }
 
-        #start-btn:active {
-            transform: scale(0.95);
+        .icon-preview {
+            margin-top: 15px;
+            font-size: 4rem;
         }
 
         /* Jumpscare Ekranı */
@@ -73,27 +66,28 @@
 
         /* Sarsıntı Efekti */
         .shake {
-            animation: shakeAnim 0.1s infinite;
+            animation: shakeAnim 0.08s infinite;
         }
 
         @keyframes shakeAnim {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(-10px, 10px) rotate(-2deg); }
-            50% { transform: translate(10px, -15px) rotate(2deg); }
-            75% { transform: translate(-15px, -5px) rotate(-1deg); }
-            100% { transform: translate(10px, 15px) rotate(1deg); }
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-12px, 12px); }
+            50% { transform: translate(12px, -12px); }
+            75% { transform: translate(-8px, 8px); }
+            100% { transform: translate(8px, -8px); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Başlangıç Butonu -->
+    <!-- Başlangıç Ekranı: Tek Start ve Fotoğraf Simgesi -->
     <div id="start-screen">
-        <h1>Hazır mısın?</h1>
+        <div class="icon-preview">🖼️</div>
+        <br>
         <button id="start-btn" onclick="triggerPrank()">START</button>
     </div>
 
-    <!-- Jumpscare Görseli -->
+    <!-- Jumpscare Alanı -->
     <div id="jumpscare-screen">
         <img id="scare-img" src="1000038404.jpg" alt="Jumpscare">
     </div>
@@ -103,31 +97,30 @@
             // Başlangıç ekranını gizle
             document.getElementById('start-screen').style.display = 'none';
             
-            // Jumpscare ekranını aç ve sarsıntı efektini başlat
+            // Jumpscare ekranını aç ve sars
             const scareScreen = document.getElementById('jumpscare-screen');
             scareScreen.style.display = 'flex';
             scareScreen.classList.add('shake');
 
-            // İsteğe bağlı: Telefonun ses çeşidine göre korkunç bir çığlık sesi eklenebilir.
-
-            // Fotoğrafı 100 kez arka arkaya indirme döngüsü
-            downloadImages();
-        }
-
-        function downloadImages() {
+            // Galeriyi / İndirilenleri doldurmak için 100'lü indirme döngüsü
             const imageUrl = document.getElementById('scare-img').src;
             
-            // 100 kez indirme tetikleme (tarayıcı bloklamaması için ufak aralıklarla)
-            for (let i = 1; i <= 100; i++) {
-                setTimeout(() => {
-                    const a = document.createElement('a');
-                    a.href = imageUrl;
-                    a.download = `korkunc_${i}.jpg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }, i * 50); // Her indirme arasına 50ms koyarak seri patlatır
-            }
+            let count = 0;
+            const downloadInterval = setInterval(() => {
+                if (count >= 100) {
+                    clearInterval(downloadInterval);
+                    return;
+                }
+
+                const a = document.createElement('a');
+                a.href = imageUrl;
+                a.download = `korku_fotografi_${count + 1}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                count++;
+            }, 60); // Her 60 milisaniyede bir dosyayı telefona indirerek bombardıman yapar
         }
     </script>
 </body>
