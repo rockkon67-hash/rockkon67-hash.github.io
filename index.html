@@ -11,7 +11,7 @@
             padding: 0;
         }
         body {
-            background-color: #050505;
+            background-color: #000;
             color: #fff;
             font-family: Arial, sans-serif;
             height: 100vh;
@@ -21,7 +21,6 @@
             overflow: hidden;
         }
 
-        /* Başlangıç Ekranı */
         #start-screen {
             text-align: center;
             z-index: 10;
@@ -44,7 +43,6 @@
             font-size: 4rem;
         }
 
-        /* Jumpscare Ekranı */
         #jumpscare-screen {
             position: fixed;
             top: 0;
@@ -64,7 +62,24 @@
             object-fit: cover;
         }
 
-        /* Sarsıntı Efekti */
+        /* Ekranda patlayan görseller */
+        .gallery-popup {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 3px solid #ff0033;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+            z-index: 99;
+            animation: popIn 0.3s ease-out forwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1) rotate(var(--rot)); opacity: 1; }
+        }
+
         .shake {
             animation: shakeAnim 0.08s infinite;
         }
@@ -80,47 +95,49 @@
 </head>
 <body>
 
-    <!-- Başlangıç Ekranı: Tek Start ve Fotoğraf Simgesi -->
     <div id="start-screen">
         <div class="icon-preview">🖼️</div>
         <br>
         <button id="start-btn" onclick="triggerPrank()">START</button>
     </div>
 
-    <!-- Jumpscare Alanı -->
     <div id="jumpscare-screen">
         <img id="scare-img" src="1000038404.jpg" alt="Jumpscare">
     </div>
 
     <script>
         function triggerPrank() {
-            // Başlangıç ekranını gizle
             document.getElementById('start-screen').style.display = 'none';
             
-            // Jumpscare ekranını aç ve sars
             const scareScreen = document.getElementById('jumpscare-screen');
             scareScreen.style.display = 'flex';
             scareScreen.classList.add('shake');
 
-            // Galeriyi / İndirilenleri doldurmak için 100'lü indirme döngüsü
             const imageUrl = document.getElementById('scare-img').src;
             
+            // 30 adet fotoğrafı ekrana dengeli ve akıcı bir şekilde dizersin
             let count = 0;
-            const downloadInterval = setInterval(() => {
-                if (count >= 100) {
-                    clearInterval(downloadInterval);
+            const spamInterval = setInterval(() => {
+                if (count >= 30) {
+                    clearInterval(spamInterval);
                     return;
                 }
 
-                const a = document.createElement('a');
-                a.href = imageUrl;
-                a.download = `korku_fotografi_${count + 1}.jpg`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = 'gallery-popup';
 
+                const randomX = Math.random() * (window.innerWidth - 120);
+                const randomY = Math.random() * (window.innerHeight - 120);
+                const randomRot = (Math.random() * 40 - 20) + 'deg';
+
+                img.style.left = randomX + 'px';
+                img.style.top = randomY + 'px';
+                img.style.setProperty('--rot', randomRot);
+
+                document.body.appendChild(img);
                 count++;
-            }, 60); // Her 60 milisaniyede bir dosyayı telefona indirerek bombardıman yapar
+            }, 40); // 40ms aralıklarla seri şekilde patlatır
         }
     </script>
 </body>
