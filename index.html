@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MGD HUB - Ultra Fast Kahoot AI</title>
+    <title>MGD HUB CORE - Ultimate Kahoot Solver</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,8 +12,8 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #0b0b0b;
-            color: #ffffff;
+            background-color: #0d1117;
+            color: #c9d1d9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,82 +22,95 @@
         }
         .container {
             width: 100%;
-            max-width: 460px;
-            background: #141414;
-            border: 2px solid #222;
+            max-width: 440px;
+            background: #161b22;
+            border: 1px solid #30363d;
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 10px 30px rgba(0, 255, 204, 0.05);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7);
         }
         h1 {
-            font-size: 22px;
+            font-size: 24px;
             text-align: center;
-            margin-bottom: 4px;
-            background: linear-gradient(45deg, #00ffcc, #0077ff);
+            margin-bottom: 6px;
+            background: linear-gradient(45deg, #58a6ff, #3fb950);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 900;
         }
         .subtitle {
             text-align: center;
             font-size: 11px;
-            color: #777;
-            margin-bottom: 20px;
-            letter-spacing: 1.5px;
+            color: #8b949e;
+            margin-bottom: 22px;
+            letter-spacing: 2px;
+            font-weight: bold;
         }
         .card {
-            background: #1c1c1c;
-            border: 1px solid #2a2a2a;
+            background: #0d1117;
+            border: 1px solid #30363d;
             border-radius: 10px;
-            padding: 14px;
+            padding: 16px;
             margin-bottom: 14px;
         }
         .card h2 {
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 8px;
-            color: #00ffcc;
+            color: #58a6ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         input, textarea {
             width: 100%;
-            background: #0a0a0a;
-            border: 1px solid #444;
-            color: #00ffcc;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 12px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            color: #3fb950;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
             margin-bottom: 10px;
+            outline: none;
+            transition: 0.2s;
+        }
+        input:focus, textarea:focus {
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
         }
         textarea {
-            height: 70px;
+            height: 80px;
             resize: none;
             font-family: monospace;
         }
-        button {
+        .btn {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #00ffcc, #0099ff);
-            color: #000;
+            padding: 14px;
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: #fff;
             font-weight: bold;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.1s;
-            font-size: 14px;
+            transition: 0.15s;
+            font-size: 15px;
+            box-shadow: 0 4px 0 #196c2e;
         }
-        button:active {
-            transform: scale(0.97);
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #196c2e;
         }
         .game-panel {
             display: none;
         }
         .q-display {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 12px;
-            min-height: 40px;
-            color: #ddd;
+            background: #161b22;
+            border: 1px solid #30363d;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 14px;
+            min-height: 45px;
+            color: #c9d1d9;
+            font-family: monospace;
         }
         .options-grid {
             display: grid;
@@ -106,22 +119,24 @@
             margin-bottom: 12px;
         }
         .opt-btn {
-            padding: 14px;
+            padding: 16px;
             font-weight: bold;
             border-radius: 8px;
             border: 2px solid transparent;
             color: white;
             cursor: pointer;
             font-size: 13px;
+            text-align: center;
+            transition: 0.2s;
         }
-        .opt-0 { background: #e21b3c; } 
-        .opt-1 { background: #1368ce; } 
-        .opt-2 { background: #d89e00; } 
-        .opt-3 { background: #26890d; } 
+        .opt-0 { background: #da3633; } /* Kırmızı */
+        .opt-1 { background: #1f6feb; } /* Mavi */
+        .opt-2 { background: #9e6a03; } /* Sarı */
+        .opt-3 { background: #238636; } /* Yeşil */
         
         .opt-btn.correct {
             border: 3px solid #ffffff;
-            box-shadow: 0 0 20px #00ff00;
+            box-shadow: 0 0 25px #3fb950;
             transform: scale(1.05);
         }
         .opt-btn.dimmed {
@@ -130,42 +145,65 @@
         .status {
             text-align: center;
             font-size: 12px;
-            color: #00ff00;
+            color: #3fb950;
             margin-top: 8px;
-            min-height: 16px;
+            font-weight: bold;
+            min-height: 18px;
+        }
+        .lobby-info {
+            display: flex;
+            justify-content: space-between;
+            background: #161b22;
+            border: 1px solid #30363d;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 12px;
+            color: #8b949e;
+        }
+        .lobby-info span {
+            color: #58a6ff;
+            font-weight: bold;
         }
         .footer {
             text-align: center;
             font-size: 10px;
-            color: #444;
-            margin-top: 10px;
+            color: #484f58;
+            margin-top: 15px;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>MGD HUB</h1>
-        <div class="subtitle">ULTRA FAST AI SOLVER</div>
+        <h1>MGD HUB CORE</h1>
+        <div class="subtitle">ULTIMATE KAHOT AI SOLVER</div>
 
         <!-- 1. GİRİŞ EKRANI -->
         <div id="loginScreen" class="card">
             <h2>🎮 Oyun Girişi</h2>
-            <input type="text" id="gamePin" placeholder="Game PIN (ID)..." style="text-align:center;">
-            <input type="text" id="nickname" placeholder="Takma Ad (Nick)..." style="text-align:center; margin-bottom: 12px;">
-            <button onclick="connectGame()">Hızlı Bağlan ⚡</button>
-            <div class="status" id="loginStatus"></div>
+            <input type="text" id="gamePin" placeholder="Game PIN (Oda ID)..." style="text-align:center;">
+            <input type="text" id="nickname" placeholder="Nickname (Takma Ad)..." style="text-align:center; margin-bottom: 14px;">
+            <button class="btn" onclick="connectGame()">Sisteme Bağlan ⚡</button>
+            <div class="status" id="loginStatus" style="color: #f85149;"></div>
         </div>
 
-        <!-- 2. OYUN EKRANI -->
+        <!-- 2. OYUN LOBİSİ & AI ÇÖZÜCÜ -->
         <div id="gameScreen" class="game-panel">
+            
+            <div class="lobby-info">
+                <div>Oda PIN: <span id="displayPin">000000</span></div>
+                <div>Oyuncu: <span id="displayNick">-</span></div>
+            </div>
+
             <div class="card">
                 <h2>⚡ Anlık Soru Yakalayıcı</h2>
                 <textarea id="questionInput" placeholder="Soruyu ve şıkları buraya yapıştır (Anında çözer)..." oninput="autoTriggerSolve()"></textarea>
             </div>
 
             <div class="card">
-                <h2>🎯 Doğru Cevap (Anında)</h2>
+                <h2>🎯 Yapay Zeka Cevap Paneli</h2>
                 <div class="q-display" id="activeQuestionText">Soru bekleniyor...</div>
                 <div class="options-grid">
                     <button class="opt-btn opt-0" id="b0">1. Şık</button>
@@ -173,34 +211,34 @@
                     <button class="opt-btn opt-2" id="b2">3. Şık</button>
                     <button class="opt-btn opt-3" id="b3">4. Şık</button>
                 </div>
-                <div class="status" id="aiStatus" style="color: #00ffcc;">Hazır 🚀</div>
+                <div class="status" id="aiStatus">Yapay zeka aktif 🚀</div>
             </div>
 
-            <button onclick="resetApp()" style="background: #222; color: #ff4444; border: 1px solid #ff4444; font-size: 12px; padding: 8px;">Çıkış Yap</button>
+            <button onclick="resetApp()" style="background: transparent; color: #f85149; border: 1px solid #f85149; font-size: 12px; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold;">Odadan Ayrıl / Çıkış Yap</button>
         </div>
 
-        <div class="footer">MGD Systems &copy; 2026</div>
+        <div class="footer">MGD SYSTEMS &copy; 2026 - ALL RIGHTS RESERVED</div>
     </div>
 
     <script>
-        // Senin gönderdiğin anahtar doğrudan buraya entegre edildi kanka
         const apiKey = "AQ.Ab8RN6JJAvXT24-2-xm-8u4TgPg-hkVi50FKl26UnQqW2y86ug";
-        let gamePin = "";
-        let nickname = "";
         let lastCheckedText = "";
 
         function connectGame() {
-            gamePin = document.getElementById('gamePin').value.trim();
-            nickname = document.getElementById('nickname').value.trim();
+            const gamePin = document.getElementById('gamePin').value.trim();
+            const nickname = document.getElementById('nickname').value.trim();
 
             if (!gamePin || !nickname) {
-                document.getElementById('loginStatus').innerText = "⚠ PIN veya Nick boş olamaz kanka!";
+                document.getElementById('loginStatus').innerText = "⚠ PIN veya Nickname boş bırakılamaz kanka!";
                 return;
             }
 
+            document.getElementById('loginStatus').innerText = "";
+            document.getElementById('displayPin').innerText = gamePin;
+            document.getElementById('displayNick').innerText = nickname;
+
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('gameScreen').style.display = 'block';
-            document.getElementById('aiStatus').innerText = `Bağlandı! PIN: ${gamePin}`;
         }
 
         async function autoTriggerSolve() {
@@ -208,10 +246,10 @@
             if (rawText.length < 3 || rawText === lastCheckedText) return;
             
             lastCheckedText = rawText;
-            document.getElementById('aiStatus').innerText = "⚡ Hızlıca çözülüyor...";
+            document.getElementById('aiStatus').innerText = "⚡ Hızla analiz ediliyor...";
 
             const MODEL_NAME = "gemini-2.5-flash";
-            const prompt = `Sadece doğru şıkkın numarasını (1, 2, 3 veya 4) rakam olarak yaz. Başka hiçbir şey yazma.\n\n${rawText}`;
+            const prompt = `Bu bir Kahoot sorusudur. Hangi dilde olursa olsun (Türkçe, İngilizce, Almanca vb.) soruyu çöz ve SADECE doğru şıkkın numarasını (1, 2, 3 veya 4) rakam olarak yaz. Başka hiçbir şey yazma.\n\n${rawText}`;
 
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`, {
@@ -223,7 +261,8 @@
                 const data = await response.json();
                 
                 if (data.error) {
-                    document.getElementById('aiStatus').innerText = "❌ API Hatası: Geçersiz anahtar!";
+                    document.getElementById('aiStatus').style.color = "#f85149";
+                    document.getElementById('aiStatus').innerText = "❌ API Anahtarı Hatası!";
                     return;
                 }
 
@@ -234,10 +273,14 @@
                     const correctIndex = parseInt(match[0]) - 1;
                     highlightCorrectOption(correctIndex);
                     document.getElementById('activeQuestionText').innerText = "Çözüldü: " + rawText.split('\n')[0];
-                    document.getElementById('aiStatus').innerText = `🚀 Doğru Şık: ${correctIndex + 1}`;
+                    document.getElementById('aiStatus').style.color = "#3fb950";
+                    document.getElementById('aiStatus').innerText = `🚀 Doğru Şık: ${correctIndex + 1} Numaralı Şık`;
+                } else {
+                    document.getElementById('aiStatus').innerText = "⚠ Cevap tam okunamadı.";
                 }
             } catch (error) {
-                document.getElementById('aiStatus').innerText = "❌ Bağlantı Hatası!";
+                document.getElementById('aiStatus').style.color = "#f85149";
+                document.getElementById('aiStatus').innerText = "❌ Sunucu bağlantı hatası!";
             }
         }
 
@@ -257,12 +300,13 @@
             document.getElementById('gameScreen').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'block';
             document.getElementById('questionInput').value = '';
+            document.getElementById('activeQuestionText').innerText = "Soru bekleniyor...";
+            document.getElementById('aiStatus').innerText = "Yapay zeka aktif 🚀";
             lastCheckedText = "";
             for (let i = 0; i < 4; i++) {
                 document.getElementById(`b${i}`).classList.remove('correct', 'dimmed');
             }
         }
     </script>
-
 </body>
 </html>
