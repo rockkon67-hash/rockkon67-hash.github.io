@@ -3,142 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sürpriz</title>
+    <title>MGD HUB - Ultra Fast Kahoot AI</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            height: 100vh;
+            background-color: #0b0b0b;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            min-height: 100vh;
+            padding: 20px;
         }
-
-        #start-screen {
-            text-align: center;
-            z-index: 10;
-        }
-
-        #start-btn {
-            background: #ff0033;
-            border: none;
-            color: white;
-            padding: 20px 50px;
-            font-size: 2rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
-        }
-
-        .icon-preview {
-            margin-top: 15px;
-            font-size: 4rem;
-        }
-
-        #jumpscare-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-
-        #jumpscare-screen img {
+        .container {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 460px;
+            background: #141414;
+            border: 2px solid #222;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 255, 204, 0.05);
         }
-
-        /* Ekranda patlayan görseller */
-        .gallery-popup {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border: 3px solid #ff0033;
+        h1 {
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 4px;
+            background: linear-gradient(45deg, #00ffcc, #0077ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 11px;
+            color: #777;
+            margin-bottom: 20px;
+            letter-spacing: 1.5px;
+        }
+        .card {
+            background: #1c1c1c;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        .card h2 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #00ffcc;
+        }
+        input, textarea {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            color: #00ffcc;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        textarea {
+            height: 70px;
+            resize: none;
+            font-family: monospace;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #00ffcc, #0099ff);
+            color: #000;
+            font-weight: bold;
+            border: none;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-            z-index: 99;
-            animation: popIn 0.3s ease-out forwards;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 14px;
         }
-
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1) rotate(var(--rot)); opacity: 1; }
+        button:active {
+            transform: scale(0.97);
         }
-
-        .shake {
-            animation: shakeAnim 0.08s infinite;
+        .game-panel {
+            display: none;
         }
-
-        @keyframes shakeAnim {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-12px, 12px); }
-            50% { transform: translate(12px, -12px); }
-            75% { transform: translate(-8px, 8px); }
-            100% { transform: translate(8px, -8px); }
+        .q-display {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            min-height: 40px;
+            color: #ddd;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .opt-btn {
+            padding: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .opt-0 { background: #e21b3c; } 
+        .opt-1 { background: #1368ce; } 
+        .opt-2 { background: #d89e00; } 
+        .opt-3 { background: #26890d; } 
+        
+        .opt-btn.correct {
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 20px #00ff00;
+            transform: scale(1.05);
+        }
+        .opt-btn.dimmed {
+            opacity: 0.2;
+        }
+        .status {
+            text-align: center;
+            font-size: 12px;
+            color: #00ff00;
+            margin-top: 8px;
+            min-height: 16px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #444;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div id="start-screen">
-        <div class="icon-preview">🖼️</div>
-        <br>
-        <button id="start-btn" onclick="triggerPrank()">START</button>
-    </div>
+    <div class="container">
+        <h1>MGD HUB</h1>
+        <div class="subtitle">ULTRA FAST AI SOLVER</div>
 
-    <div id="jumpscare-screen">
-        <img id="scare-img" src="1000038404.jpg" alt="Jumpscare">
+        <!-- 1. GİRİŞ EKRANI -->
+        <div id="loginScreen" class="card">
+            <h2>🎮 Oyun Girişi</h2>
+            <input type="text" id="gamePin" placeholder="Game PIN (ID)..." style="text-align:center;">
+            <input type="text" id="nickname" placeholder="Takma Ad (Nick)..." style="text-align:center; margin-bottom: 12px;">
+            <button onclick="connectGame()">Hızlı Bağlan ⚡</button>
+            <div class="status" id="loginStatus"></div>
+        </div>
+
+        <!-- 2. OYUN EKRANI -->
+        <div id="gameScreen" class="game-panel">
+            <div class="card">
+                <h2>⚡ Anlık Soru Yakalayıcı</h2>
+                <textarea id="questionInput" placeholder="Soruyu ve şıkları buraya yapıştır (Anında çözer)..." oninput="autoTriggerSolve()"></textarea>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Doğru Cevap (Anında)</h2>
+                <div class="q-display" id="activeQuestionText">Soru bekleniyor...</div>
+                <div class="options-grid">
+                    <button class="opt-btn opt-0" id="b0">1. Şık</button>
+                    <button class="opt-btn opt-1" id="b1">2. Şık</button>
+                    <button class="opt-btn opt-2" id="b2">3. Şık</button>
+                    <button class="opt-btn opt-3" id="b3">4. Şık</button>
+                </div>
+                <div class="status" id="aiStatus" style="color: #00ffcc;">Hazır 🚀</div>
+            </div>
+
+            <button onclick="resetApp()" style="background: #222; color: #ff4444; border: 1px solid #ff4444; font-size: 12px; padding: 8px;">Çıkış Yap</button>
+        </div>
+
+        <div class="footer">MGD Systems &copy; 2026</div>
     </div>
 
     <script>
-        function triggerPrank() {
-            document.getElementById('start-screen').style.display = 'none';
-            
-            const scareScreen = document.getElementById('jumpscare-screen');
-            scareScreen.style.display = 'flex';
-            scareScreen.classList.add('shake');
+        // Senin gönderdiğin anahtar doğrudan buraya entegre edildi kanka
+        const apiKey = "AQ.Ab8RN6JJAvXT24-2-xm-8u4TgPg-hkVi50FKl26UnQqW2y86ug";
+        let gamePin = "";
+        let nickname = "";
+        let lastCheckedText = "";
 
-            const imageUrl = document.getElementById('scare-img').src;
+        function connectGame() {
+            gamePin = document.getElementById('gamePin').value.trim();
+            nickname = document.getElementById('nickname').value.trim();
+
+            if (!gamePin || !nickname) {
+                document.getElementById('loginStatus').innerText = "⚠ PIN veya Nick boş olamaz kanka!";
+                return;
+            }
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('aiStatus').innerText = `Bağlandı! PIN: ${gamePin}`;
+        }
+
+        async function autoTriggerSolve() {
+            const rawText = document.getElementById('questionInput').value.trim();
+            if (rawText.length < 3 || rawText === lastCheckedText) return;
             
-            // 30 adet fotoğrafı ekrana dengeli ve akıcı bir şekilde dizersin
-            let count = 0;
-            const spamInterval = setInterval(() => {
-                if (count >= 30) {
-                    clearInterval(spamInterval);
+            lastCheckedText = rawText;
+            document.getElementById('aiStatus').innerText = "⚡ Hızlıca çözülüyor...";
+
+            const MODEL_NAME = "gemini-2.5-flash";
+            const prompt = `Sadece doğru şıkkın numarasını (1, 2, 3 veya 4) rakam olarak yaz. Başka hiçbir şey yazma.\n\n${rawText}`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('aiStatus').innerText = "❌ API Hatası: Geçersiz anahtar!";
                     return;
                 }
 
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.className = 'gallery-popup';
+                const aiText = data.candidates[0].content.parts[0].text.trim();
+                const match = aiText.match(/[1-4]/);
 
-                const randomX = Math.random() * (window.innerWidth - 120);
-                const randomY = Math.random() * (window.innerHeight - 120);
-                const randomRot = (Math.random() * 40 - 20) + 'deg';
+                if (match) {
+                    const correctIndex = parseInt(match[0]) - 1;
+                    highlightCorrectOption(correctIndex);
+                    document.getElementById('activeQuestionText').innerText = "Çözüldü: " + rawText.split('\n')[0];
+                    document.getElementById('aiStatus').innerText = `🚀 Doğru Şık: ${correctIndex + 1}`;
+                }
+            } catch (error) {
+                document.getElementById('aiStatus').innerText = "❌ Bağlantı Hatası!";
+            }
+        }
 
-                img.style.left = randomX + 'px';
-                img.style.top = randomY + 'px';
-                img.style.setProperty('--rot', randomRot);
+        function highlightCorrectOption(index) {
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`b${i}`);
+                btn.classList.remove('correct', 'dimmed');
+                if (i === index) {
+                    btn.classList.add('correct');
+                } else {
+                    btn.classList.add('dimmed');
+                }
+            }
+        }
 
-                document.body.appendChild(img);
-                count++;
-            }, 40); // 40ms aralıklarla seri şekilde patlatır
+        function resetApp() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('questionInput').value = '';
+            lastCheckedText = "";
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`b${i}`).classList.remove('correct', 'dimmed');
+            }
         }
     </script>
+
 </body>
 </html>
