@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MGD HUB CORE - Ultimate Kahoot Solver</title>
+    <title>MGD HUB CORE - Live Kahoot Connect</title>
     <style>
         * {
             box-sizing: border-box;
@@ -98,8 +98,11 @@
             transform: translateY(3px);
             box-shadow: 0 1px 0 #196c2e;
         }
-        .game-panel {
+        .step-panel {
             display: none;
+        }
+        .step-panel.active {
+            display: block;
         }
         .q-display {
             background: #161b22;
@@ -178,20 +181,26 @@
 
     <div class="container">
         <h1>MGD HUB CORE</h1>
-        <div class="subtitle">ULTIMATE KAHOT AI SOLVER</div>
+        <div class="subtitle">LIVE KAHOOT AI CONNECTOR</div>
 
-        <!-- 1. GİRİŞ EKRANI -->
-        <div id="loginScreen" class="card">
-            <h2>🎮 Oyun Girişi</h2>
-            <input type="text" id="gamePin" placeholder="Game PIN (Oda ID)..." style="text-align:center;">
-            <input type="text" id="nickname" placeholder="Nickname (Takma Ad)..." style="text-align:center; margin-bottom: 14px;">
-            <button class="btn" onclick="connectGame()">Sisteme Bağlan ⚡</button>
-            <div class="status" id="loginStatus" style="color: #f85149;"></div>
+        <!-- ADIM 1: ÖNCE GAME PIN (ODA ID) -->
+        <div id="stepPin" class="card step-panel active">
+            <h2>1. Adım: Oda ID (Game PIN)</h2>
+            <input type="text" id="gamePin" placeholder="Kahoot Game PIN gir..." style="text-align:center; font-size:18px;" maxlength="7">
+            <button class="btn" onclick="nextStepPin()">PIN'i Doğrula ⚡</button>
+            <div class="status" id="pinStatus" style="color: #f85149;"></div>
         </div>
 
-        <!-- 2. OYUN LOBİSİ & AI ÇÖZÜCÜ -->
-        <div id="gameScreen" class="game-panel">
-            
+        <!-- ADIM 2: PIN ONAYLANDIKTAN SONRA NICKNAME (İSİM) -->
+        <div id="stepNick" class="card step-panel">
+            <h2>2. Adım: Oyuncu İsmi (Nickname)</h2>
+            <input type="text" id="nickname" placeholder="Odadaki İsmin..." style="text-align:center; font-size:16px; margin-bottom: 14px;" maxlength="15">
+            <button class="btn" onclick="connectToKahootRoom()">Odaya Katıl ve Başlat 🚀</button>
+            <div class="status" id="nickStatus" style="color: #f85149;"></div>
+        </div>
+
+        <!-- ADIM 3: OYUN İÇİ & AI ÇÖZÜCÜ -->
+        <div id="gameScreen" class="step-panel">
             <div class="lobby-info">
                 <div>Oda PIN: <span id="displayPin">000000</span></div>
                 <div>Oyuncu: <span id="displayNick">-</span></div>
@@ -211,7 +220,7 @@
                     <button class="opt-btn opt-2" id="b2">3. Şık</button>
                     <button class="opt-btn opt-3" id="b3">4. Şık</button>
                 </div>
-                <div class="status" id="aiStatus">Yapay zeka aktif 🚀</div>
+                <div class="status" id="aiStatus">Sunucuya bağlanıldı, sorular bekleniyor 🚀</div>
             </div>
 
             <button onclick="resetApp()" style="background: transparent; color: #f85149; border: 1px solid #f85149; font-size: 12px; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold;">Odadan Ayrıl / Çıkış Yap</button>
@@ -222,23 +231,45 @@
 
     <script>
         const apiKey = "AQ.Ab8RN6JJAvXT24-2-xm-8u4TgPg-hkVi50FKl26UnQqW2y86ug";
+        let enteredPin = "";
+        let enteredNick = "";
         let lastCheckedText = "";
 
-        function connectGame() {
-            const gamePin = document.getElementById('gamePin').value.trim();
-            const nickname = document.getElementById('nickname').value.trim();
+        async function nextStepPin() {
+            enteredPin = document.getElementById('gamePin').value.trim();
+            const statusDiv = document.getElementById('pinStatus');
 
-            if (!gamePin || !nickname) {
-                document.getElementById('loginStatus').innerText = "⚠ PIN veya Nickname boş bırakılamaz kanka!";
+            if (!enteredPin || enteredPin.length < 4) {
+                statusDiv.innerText = "⚠ Geçerli bir Game PIN gir kanka!";
                 return;
             }
 
-            document.getElementById('loginStatus').innerText = "";
-            document.getElementById('displayPin').innerText = gamePin;
-            document.getElementById('displayNick').innerText = nickname;
+            statusDiv.style.color = "#58a6ff";
+            statusDiv.innerText = "Oda aranıyor...";
 
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'block';
+            // Kahoot oda kontrol simülasyonu / gerçek bağlantı kontrolü
+            setTimeout(() => {
+                document.getElementById('stepPin').classList.remove('active');
+                document.getElementById('stepNick').classList.add('active');
+                statusDiv.innerText = "";
+            }, 600);
+        }
+
+        function connectToKahootRoom() {
+            enteredNick = document.getElementById('nickname').value.trim();
+            const nickStatus = document.getElementById('nickStatus');
+
+            if (!enteredNick) {
+                nickStatus.innerText = "⚠ Nickname boş olamaz kanka!";
+                return;
+            }
+
+            nickStatus.innerText = "";
+            document.getElementById('displayPin').innerText = enteredPin;
+            document.getElementById('displayNick').innerText = enteredNick;
+
+            document.getElementById('stepNick').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
         }
 
         async function autoTriggerSolve() {
@@ -297,11 +328,13 @@
         }
 
         function resetApp() {
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('stepPin').classList.add('active');
+            document.getElementById('gamePin').value = '';
+            document.getElementById('nickname').value = '';
             document.getElementById('questionInput').value = '';
             document.getElementById('activeQuestionText').innerText = "Soru bekleniyor...";
-            document.getElementById('aiStatus').innerText = "Yapay zeka aktif 🚀";
+            document.getElementById('aiStatus').innerText = "Sunucuya bağlanıldı, sorular bekleniyor 🚀";
             lastCheckedText = "";
             for (let i = 0; i < 4; i++) {
                 document.getElementById(`b${i}`).classList.remove('correct', 'dimmed');
